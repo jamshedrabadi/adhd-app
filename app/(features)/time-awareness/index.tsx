@@ -72,9 +72,10 @@ export const TimeAwareness = () => {
 			<FlatList
 				data={schedules}
 				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => (
+				renderItem={({ item, index }) => (
 					<ScheduleCard
 						schedule={item}
+						index={index}
 						onUpdate={updateSchedule}
 					/>
 				)}
