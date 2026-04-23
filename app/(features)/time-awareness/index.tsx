@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Schedule } from "../../../types/schedule";
 import { ScheduleCard } from "../../../components/ScheduleCard";
+import { colors } from "../../../theme/theme";
 
 const STORAGE_KEY = "SCHEDULES";
 
@@ -59,7 +60,13 @@ export const TimeAwareness = () => {
 	};
 
 	return (
-		<View style={{ flex: 1, padding: 20 }}>
+		<View
+			style={{
+				flex: 1,
+				padding: 24,
+				backgroundColor: colors.background,
+			}}
+		>
 			<Button title="Add Schedule" onPress={addSchedule} />
 
 			<FlatList

@@ -1,5 +1,7 @@
 import { View, Text, Switch, TextInput } from "react-native";
+
 import { Schedule } from "../types/schedule";
+import { colors } from "../theme/theme";
 
 type Props = {
 	schedule: Schedule;
@@ -10,66 +12,122 @@ export const ScheduleCard = ({ schedule, onUpdate }: Props) => {
 	return (
 		<View
 			style={{
-				padding: 15,
-				marginVertical: 10,
-				backgroundColor: "#eee",
-				borderRadius: 10,
+				padding: 24,
+				marginVertical: 8,
+				backgroundColor: colors.surface,
+				borderRadius: 12,
+				borderWidth: 1,
+				borderColor: colors.border,
 			}}
 		>
 			{/* Toggle */}
 			<View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-				<Text>Enabled</Text>
+				<Text style={{ color: colors.textPrimary }}>
+					Enabled
+				</Text>
+
 				<Switch
 					value={schedule.enabled}
 					onValueChange={(value) =>
 						onUpdate({ ...schedule, enabled: value })
 					}
+					trackColor={{
+						false: colors.surfaceAlt,
+						true: colors.accentMuted,
+					}}
+					thumbColor={schedule.enabled ? colors.accent : "#ccc"}
 				/>
 			</View>
 
 			{/* Start Time */}
-			<Text>Start Time</Text>
-			<TextInput
-				value={schedule.startTime}
-				onChangeText={(text) =>
-					onUpdate({ ...schedule, startTime: text })
-				}
-				placeholder="HH:MM"
-				style={{ borderBottomWidth: 1, marginBottom: 10 }}
-			/>
+			<View key={"startTime"} style={{ marginTop: 16 }}>
+				<Text style={{ color: colors.textSecondary, marginBottom: 4 }}>
+					Start Time
+				</Text>
+
+				<TextInput
+					value={schedule.startTime}
+					onChangeText={(text) =>
+						onUpdate({ ...schedule, startTime: text })
+					}
+					placeholder="HH:MM"
+					placeholderTextColor={colors.textSecondary}
+					style={{
+						borderBottomWidth: 1,
+						borderColor: colors.border,
+						color: colors.textPrimary,
+						paddingVertical: 4,
+					}}
+					keyboardType={"default"}
+				/>
+			</View>
 
 			{/* End Time */}
-			<Text>End Time</Text>
-			<TextInput
-				value={schedule.endTime}
-				onChangeText={(text) =>
-					onUpdate({ ...schedule, endTime: text })
-				}
-				placeholder="HH:MM"
-				style={{ borderBottomWidth: 1, marginBottom: 10 }}
-			/>
+			<View key={"endTime"} style={{ marginTop: 16 }}>
+				<Text style={{ color: colors.textSecondary, marginBottom: 4 }}>
+					End Time
+				</Text>
+
+				<TextInput
+					value={schedule.endTime}
+					onChangeText={(text) =>
+						onUpdate({ ...schedule, endTime: text })
+					}
+					placeholder="HH:MM"
+					placeholderTextColor={colors.textSecondary}
+					style={{
+						borderBottomWidth: 1,
+						borderColor: colors.border,
+						color: colors.textPrimary,
+						paddingVertical: 4,
+					}}
+					keyboardType={"default"}
+				/>
+			</View>
 
 			{/* Interval */}
-			<Text>Interval (minutes)</Text>
-			<TextInput
-				value={schedule.interval}
-				onChangeText={(text) =>
-					onUpdate({ ...schedule, interval: text })
-				}
-				keyboardType="numeric"
-				style={{ borderBottomWidth: 1, marginBottom: 10 }}
-			/>
+			<View key={"interval"} style={{ marginTop: 16 }}>
+				<Text style={{ color: colors.textSecondary, marginBottom: 4 }}>
+					Interval (minutes)
+				</Text>
+				<TextInput
+					value={schedule.interval}
+					onChangeText={(text) =>
+						onUpdate({ ...schedule, interval: text })
+					}
+					placeholder="10"
+					placeholderTextColor={colors.textSecondary}
+					style={{
+						borderBottomWidth: 1,
+						borderColor: colors.border,
+						color: colors.textPrimary,
+						paddingVertical: 4,
+					}}
+					keyboardType={"numeric"}
+				/>
+			</View>
 
 			{/* Sound */}
-			<Text>Sound</Text>
-			<TextInput
-				value={schedule.sound}
-				onChangeText={(text) =>
-					onUpdate({ ...schedule, sound: text })
-				}
-				placeholder="default"
-				style={{ borderBottomWidth: 1 }}
-			/>
+			<View key={"sound"} style={{ marginTop: 16 }}>
+				<Text style={{ color: colors.textSecondary, marginBottom: 4 }}>
+					Sound
+				</Text>
+				<TextInput
+					value={schedule.sound}
+					onChangeText={(text) =>
+						onUpdate({ ...schedule, sound: text })
+					}
+					placeholder="default"
+					placeholderTextColor={colors.textSecondary}
+					style={{
+						borderBottomWidth: 1,
+						borderColor: colors.border,
+						color: colors.textPrimary,
+						paddingVertical: 4,
+					}}
+					keyboardType={"default"}
+				/>
+			</View>
 		</View>
 	);
 };
