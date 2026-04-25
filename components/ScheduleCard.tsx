@@ -1,8 +1,14 @@
-import { View, Text, Switch, TextInput, Pressable } from "react-native";
-import { useState } from "react";
+import { View, Text, Switch, TextInput, Pressable, LayoutAnimation, Platform, UIManager } from "react-native";
+import { useEffect, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Schedule } from "../types/schedule";
 import { colors } from "../theme/theme";
+
+// Enable LayoutAnimation on Android
+if (Platform.OS === "android") {
+	UIManager.setLayoutAnimationEnabledExperimental?.(true);
+}
 
 type Props = {
 	schedule: Schedule;
@@ -11,7 +17,19 @@ type Props = {
 };
 
 export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
-	const [collapsed, setCollapsed] = useState(false);
+	// Default: collapsed if disabled
+	const [collapsed, setCollapsed] = useState(!schedule.enabled);
+
+	// Auto collapse/expand when enabled changes
+	useEffect(() => {
+		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+		setCollapsed(!schedule.enabled);
+	}, [schedule.enabled]);
+
+	const toggleCollapse = () => {
+		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+		setCollapsed((prev) => !prev);
+	};
 
 	return (
 		<View
@@ -21,7 +39,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 				borderRadius: 12,
 				borderWidth: 1,
 				borderColor: colors.border,
-				opacity: schedule.enabled ? 1 : 0.5,
+				opacity: schedule.enabled ? 1 : 0.5, // dim when disabled
 			}}
 		>
 			{/* HEADER */}
@@ -33,23 +51,12 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 					padding: 16,
 				}}
 			>
-				{/* Left: Title */}
-				<Text
-					style={{
-						color: colors.textPrimary,
-						fontSize: 16,
-						fontWeight: "600",
-					}}
-				>
-					Schedule {index + 1}
-				</Text>
-
-				{/* Right: Toggle + Arrow */}
+				{/* LEFT: Switch + Title */}
 				<View
 					style={{
 						flexDirection: "row",
 						alignItems: "center",
-						gap: 12,
+						gap: 10,
 					}}
 				>
 					<Switch
@@ -64,20 +71,36 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 						thumbColor={schedule.enabled ? colors.accent : "#aaa"}
 					/>
 
-					<Pressable onPress={() => setCollapsed((prev) => !prev)}>
-						<Text
-							style={{
-								color: colors.textSecondary,
-								fontSize: 18,
-							}}
-						>
-							{collapsed ? "▼" : "▲"}
-						</Text>
-					</Pressable>
+					<Text
+						style={{
+							color: colors.textPrimary,
+							fontSize: 16,
+							fontWeight: "600",
+						}}
+					>
+						Schedule {index + 1}
+					</Text>
 				</View>
+
+				{/* RIGHT: Chevron */}
+				<Pressable
+					onPress={toggleCollapse}
+					style={{
+						width: 44,
+						height: 44,
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<Ionicons
+						name={collapsed ? "chevron-down" : "chevron-up"}
+						size={22}
+						color={colors.textSecondary}
+					/>
+				</Pressable>
 			</View>
 
-			{/* BODY (collapsible) */}
+			{/* BODY */}
 			{!collapsed && (
 				<View style={{
 					paddingHorizontal: 16,
@@ -86,7 +109,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 					{/* Start Time */}
 					<View
 						key={"startTime"}
-						style={{ marginTop: 8 }}
+						style={{ marginTop: 12 }}
 					>
 						<Text
 							style={{
@@ -102,6 +125,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 							onChangeText={(text) =>
 								onUpdate({ ...schedule, startTime: text })
 							}
+							editable={schedule.enabled} // disable when off
 							placeholder="HH:MM"
 							placeholderTextColor={colors.textSecondary}
 							style={{
@@ -117,7 +141,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 					{/* End Time */}
 					<View
 						key={"endTime"}
-						style={{ marginTop: 8 }}
+						style={{ marginTop: 12 }}
 					>
 						<Text
 							style={{
@@ -133,6 +157,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 							onChangeText={(text) =>
 								onUpdate({ ...schedule, endTime: text })
 							}
+							editable={schedule.enabled} // disable when off
 							placeholder="HH:MM"
 							placeholderTextColor={colors.textSecondary}
 							style={{
@@ -148,7 +173,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 					{/* Interval */}
 					<View
 						key={"interval"}
-						style={{ marginTop: 8 }}
+						style={{ marginTop: 12 }}
 					>
 						<Text
 							style={{
@@ -164,6 +189,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 							onChangeText={(text) =>
 								onUpdate({ ...schedule, interval: text })
 							}
+							editable={schedule.enabled} // disable when off
 							placeholder="10"
 							placeholderTextColor={colors.textSecondary}
 							style={{
@@ -179,7 +205,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 					{/* Sound */}
 					<View
 						key={"sound"}
-						style={{ marginTop: 8 }}
+						style={{ marginTop: 12 }}
 					>
 						<Text
 							style={{
@@ -195,6 +221,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 							onChangeText={(text) =>
 								onUpdate({ ...schedule, sound: text })
 							}
+							editable={schedule.enabled} // disable when off
 							placeholder="default"
 							placeholderTextColor={colors.textSecondary}
 							style={{

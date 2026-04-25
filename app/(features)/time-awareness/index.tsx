@@ -67,11 +67,18 @@ export const TimeAwareness = () => {
 				backgroundColor: colors.background,
 			}}
 		>
-			<Button title="Add Schedule" onPress={addSchedule} />
+			<View style={{ marginBottom: 12 }}>
+				<Button title="Add Schedule" onPress={addSchedule} />
+			</View>
 
 			<FlatList
 				data={schedules}
 				keyExtractor={(item) => item.id}
+				contentContainerStyle={{
+					paddingTop: 12,
+					paddingBottom: 24,
+				}}
+				ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
 				renderItem={({ item, index }) => (
 					<ScheduleCard
 						schedule={item}

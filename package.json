@@ -10,6 +10,7 @@
 		"ios": "expo start --ios",
 		"web": "expo start --web",
 		"lint": "expo lint",
+		"postinstall": "npx prettier --write package.json package-lock.json --use-tabs",
 		"eslint": "npx eslint"
 	},
 	"dependencies": {
