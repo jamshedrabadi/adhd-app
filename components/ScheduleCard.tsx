@@ -1,14 +1,9 @@
-import { View, Text, Switch, TextInput, Pressable, LayoutAnimation, Platform, UIManager } from "react-native";
-import { useEffect, useState } from "react";
+import { View, Text, Switch, TextInput, Pressable, Animated, Easing } from "react-native";
+import { useEffect, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Schedule } from "../types/schedule";
 import { colors } from "../theme/theme";
-
-// Enable LayoutAnimation on Android
-if (Platform.OS === "android") {
-	UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
 
 type Props = {
 	schedule: Schedule;
@@ -17,19 +12,44 @@ type Props = {
 };
 
 export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
-	// Default: collapsed if disabled
 	const [collapsed, setCollapsed] = useState(!schedule.enabled);
 
-	// Auto collapse/expand when enabled changes
+	// Animated value (0 = collapsed, 1 = expanded)
+	const animation = useRef(new Animated.Value(schedule.enabled ? 1 : 0)).current;
+
+	// Animate when enabled changes
 	useEffect(() => {
-		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+		const toValue = schedule.enabled ? 1 : 0;
+
+		Animated.timing(animation, {
+			toValue,
+			duration: 250,
+			easing: Easing.out(Easing.ease),
+			useNativeDriver: false,
+		}).start();
+
 		setCollapsed(!schedule.enabled);
 	}, [schedule.enabled]);
 
+	// Toggle manually
 	const toggleCollapse = () => {
-		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-		setCollapsed((prev) => !prev);
+		const toValue = collapsed ? 1 : 0;
+
+		Animated.timing(animation, {
+			toValue,
+			duration: 250,
+			easing: Easing.out(Easing.ease),
+			useNativeDriver: false,
+		}).start();
+
+		setCollapsed(!collapsed);
 	};
+
+	// Interpolated height
+	const bodyHeight = animation.interpolate({
+		inputRange: [0, 1],
+		outputRange: [0, 260], // adjust if needed
+	});
 
 	return (
 		<View
@@ -100,141 +120,99 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 				</Pressable>
 			</View>
 
-			{/* BODY */}
-			{!collapsed && (
-				<View style={{
-					paddingHorizontal: 16,
-					paddingBottom: 16,
-				}}>
+			{/* ANIMATED BODY */}
+			<Animated.View
+				style={{
+					overflow: "hidden",
+					height: bodyHeight,
+				}}
+			>
+				<View
+					style={{
+						paddingHorizontal: 16,
+						paddingBottom: 16,
+					}}
+				>
 					{/* Start Time */}
-					<View
-						key={"startTime"}
-						style={{ marginTop: 12 }}
-					>
-						<Text
-							style={{
-								color: colors.textSecondary,
-								marginBottom: 4,
-							}}
-						>
-							Start Time
-						</Text>
-
-						<TextInput
-							value={schedule.startTime}
-							onChangeText={(text) =>
-								onUpdate({ ...schedule, startTime: text })
-							}
-							editable={schedule.enabled} // disable when off
-							placeholder="HH:MM"
-							placeholderTextColor={colors.textSecondary}
-							style={{
-								borderBottomWidth: 1,
-								borderColor: colors.border,
-								color: colors.textPrimary,
-								paddingVertical: 4,
-							}}
-							keyboardType={"default"}
-						/>
-					</View>
+					<Text style={{ color: colors.textSecondary }}>Start Time</Text>
+					<TextInput
+						value={schedule.startTime}
+						onChangeText={(text) =>
+							onUpdate({ ...schedule, startTime: text })
+						}
+						editable={schedule.enabled}
+						placeholder="HH:MM"
+						placeholderTextColor={colors.textSecondary}
+						style={{
+							borderBottomWidth: 1,
+							borderColor: colors.border,
+							color: colors.textPrimary,
+							paddingVertical: 4,
+						}}
+					/>
 
 					{/* End Time */}
-					<View
-						key={"endTime"}
-						style={{ marginTop: 12 }}
-					>
-						<Text
-							style={{
-								color: colors.textSecondary,
-								marginBottom: 4,
-							}}
-						>
-							End Time
-						</Text>
-
-						<TextInput
-							value={schedule.endTime}
-							onChangeText={(text) =>
-								onUpdate({ ...schedule, endTime: text })
-							}
-							editable={schedule.enabled} // disable when off
-							placeholder="HH:MM"
-							placeholderTextColor={colors.textSecondary}
-							style={{
-								borderBottomWidth: 1,
-								borderColor: colors.border,
-								color: colors.textPrimary,
-								paddingVertical: 4,
-							}}
-							keyboardType={"default"}
-						/>
-					</View>
+					<Text style={{ color: colors.textSecondary, marginTop: 12 }}>
+						End Time
+					</Text>
+					<TextInput
+						value={schedule.endTime}
+						onChangeText={(text) =>
+							onUpdate({ ...schedule, endTime: text })
+						}
+						editable={schedule.enabled}
+						placeholder="HH:MM"
+						placeholderTextColor={colors.textSecondary}
+						style={{
+							borderBottomWidth: 1,
+							borderColor: colors.border,
+							color: colors.textPrimary,
+							paddingVertical: 4,
+						}}
+					/>
 
 					{/* Interval */}
-					<View
-						key={"interval"}
-						style={{ marginTop: 12 }}
-					>
-						<Text
-							style={{
-								color: colors.textSecondary,
-								marginBottom: 4,
-							}}
-						>
-							Interval (minutes)
-						</Text>
-
-						<TextInput
-							value={schedule.interval}
-							onChangeText={(text) =>
-								onUpdate({ ...schedule, interval: text })
-							}
-							editable={schedule.enabled} // disable when off
-							placeholder="10"
-							placeholderTextColor={colors.textSecondary}
-							style={{
-								borderBottomWidth: 1,
-								borderColor: colors.border,
-								color: colors.textPrimary,
-								paddingVertical: 4,
-							}}
-							keyboardType={"numeric"}
-						/>
-					</View>
+					<Text style={{ color: colors.textSecondary, marginTop: 12 }}>
+						Interval (minutes)
+					</Text>
+					<TextInput
+						value={schedule.interval}
+						onChangeText={(text) =>
+							onUpdate({ ...schedule, interval: text })
+						}
+						editable={schedule.enabled}
+						placeholder="10"
+						placeholderTextColor={colors.textSecondary}
+						style={{
+							borderBottomWidth: 1,
+							borderColor: colors.border,
+							color: colors.textPrimary,
+							paddingVertical: 4,
+						}}
+						keyboardType="numeric"
+					/>
 
 					{/* Sound */}
-					<View
-						key={"sound"}
-						style={{ marginTop: 12 }}
-					>
-						<Text
-							style={{
-								color: colors.textSecondary,
-								marginBottom: 4,
-							}}
-						>
-							Sound
-						</Text>
-
-						<TextInput
-							value={schedule.sound}
-							onChangeText={(text) =>
-								onUpdate({ ...schedule, sound: text })
-							}
-							editable={schedule.enabled} // disable when off
-							placeholder="default"
-							placeholderTextColor={colors.textSecondary}
-							style={{
-								borderBottomWidth: 1,
-								borderColor: colors.border,
-								color: colors.textPrimary,
-								paddingVertical: 4,
-							}}
-							keyboardType={"default"}
-						/>
-					</View>
+					<Text style={{ color: colors.textSecondary, marginTop: 12 }}>
+						Sound
+					</Text>
+					<TextInput
+						value={schedule.sound}
+						onChangeText={(text) =>
+							onUpdate({ ...schedule, sound: text })
+						}
+						editable={schedule.enabled}
+						placeholder="default"
+						placeholderTextColor={colors.textSecondary}
+						style={{
+							borderBottomWidth: 1,
+							borderColor: colors.border,
+							color: colors.textPrimary,
+							paddingVertical: 4,
+						}}
+					/>
 				</View>
-			)}
+			</Animated.View>
 		</View>
 	);
 };
