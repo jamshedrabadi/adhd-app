@@ -26,8 +26,8 @@ export const Index = () => {
 			</Text>
 
 			<Button
-				title="Time Awareness"
-				onPress={() => router.push("/(features)/time-awareness")}
+				title="Attention Interrupter"
+				onPress={() => router.push("/(features)/attention-interrupter")}
 			/>
 		</View>
 	);

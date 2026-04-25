@@ -1,4 +1,4 @@
-export type Schedule = {
+export type NudgeSchedule = {
 	id: string;
 	enabled: boolean;
 	startTime: string;

@@ -2,16 +2,16 @@ import { View, Text, Switch, TextInput, Pressable, Animated, Easing } from "reac
 import { useEffect, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
-import { Schedule } from "../types/schedule";
+import { NudgeSchedule } from "../types/nudgeSchedule";
 import { colors } from "../theme/theme";
 
 type Props = {
-	schedule: Schedule;
+	schedule: NudgeSchedule;
 	index: number;
-	onUpdate: (updated: Schedule) => void;
+	onUpdate: (updated: NudgeSchedule) => void;
 };
 
-export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
+export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 	const [collapsed, setCollapsed] = useState(!schedule.enabled);
 
 	// Animated value (0 = collapsed, 1 = expanded)

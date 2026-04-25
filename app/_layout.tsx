@@ -24,8 +24,8 @@ export const RootLayout = () => {
 			/>
 
 			<Stack.Screen
-				name="(features)/time-awareness/index"
-				options={{ title: "Time Awareness" }}
+				name="(features)/attention-interrupter/index"
+				options={{ title: "Attention Interrupter" }}
 			/>
 		</Stack>
 	);
