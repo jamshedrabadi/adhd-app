@@ -29,7 +29,7 @@ export const ScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 		}).start();
 
 		setCollapsed(!schedule.enabled);
-	}, [schedule.enabled]);
+	}, [schedule.enabled, animation]);
 
 	// Toggle manually
 	const toggleCollapse = () => {
