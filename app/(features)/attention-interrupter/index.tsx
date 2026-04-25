@@ -46,7 +46,7 @@ export const AttentionInterrupter = () => {
 			enabled: true,
 			startTime: "13:00",
 			endTime: "17:00",
-			interval: "10",
+			nudgeInterval: "10",
 			sound: "default",
 		};
 

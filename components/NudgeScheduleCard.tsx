@@ -171,14 +171,14 @@ export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 						}}
 					/>
 
-					{/* Interval */}
+					{/* Nudge Interval */}
 					<Text style={{ color: colors.textSecondary, marginTop: 12 }}>
-						Interval (minutes)
+						Nudge Interval (minutes)
 					</Text>
 					<TextInput
-						value={schedule.interval}
+						value={schedule.nudgeInterval}
 						onChangeText={(text) =>
-							onUpdate({ ...schedule, interval: text })
+							onUpdate({ ...schedule, nudgeInterval: text })
 						}
 						editable={schedule.enabled}
 						placeholder="10"
