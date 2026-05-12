@@ -13,23 +13,20 @@ type Props = {
 
 export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 	const [collapsed, setCollapsed] = useState(!schedule.enabled);
+	const [contentHeight, setContentHeight] = useState(0);
 
 	// Animated value (0 = collapsed, 1 = expanded)
 	const animation = useRef(new Animated.Value(schedule.enabled ? 1 : 0)).current;
 
 	// Animate when enabled changes
 	useEffect(() => {
-		const toValue = schedule.enabled ? 1 : 0;
-
 		Animated.timing(animation, {
-			toValue,
+			toValue: collapsed ? 0 : 1,
 			duration: 250,
 			easing: Easing.out(Easing.ease),
 			useNativeDriver: false,
 		}).start();
-
-		setCollapsed(!schedule.enabled);
-	}, [schedule.enabled, animation]);
+	}, [collapsed, animation]);
 
 	// Toggle manually
 	const toggleCollapse = () => {
@@ -48,7 +45,7 @@ export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 	// Interpolated height
 	const bodyHeight = animation.interpolate({
 		inputRange: [0, 1],
-		outputRange: [0, 260], // adjust if needed
+		outputRange: [0, contentHeight],
 	});
 
 	return (
@@ -125,10 +122,16 @@ export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 				style={{
 					overflow: "hidden",
 					height: bodyHeight,
+					position: "relative",
 				}}
 			>
 				<View
+					onLayout={(event) => {
+						setContentHeight(event.nativeEvent.layout.height);
+					}}
 					style={{
+						position: "absolute",
+						width: "100%",
 						paddingHorizontal: 16,
 						paddingBottom: 16,
 					}}
