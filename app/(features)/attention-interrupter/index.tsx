@@ -1,6 +1,7 @@
 import { View, Button, FlatList } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import debounce from "lodash.debounce";
 
 import { NudgeSchedule } from "../../../types/nudgeSchedule";
 import { NudgeScheduleCard } from "../../../components/NudgeScheduleCard";
@@ -28,17 +29,26 @@ export const AttentionInterrupter = () => {
 	}, []);
 
 	// Save whenever nudge schedules change
-	useEffect(() => {
-		const saveNudgeSchedules = async () => {
+	const debouncedSave = useRef(
+		debounce(async (value: NudgeSchedule[]) => {
 			try {
-				await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(nudgeSchedules));
+				await AsyncStorage.setItem(
+					STORAGE_KEY,
+					JSON.stringify(value),
+				);
 			} catch (error) {
 				console.error("Error saving nudge schedules", error);
 			}
-		};
+		}, 500),
+	).current;
 
-		saveNudgeSchedules();
-	}, [nudgeSchedules]);
+	useEffect(() => {
+		debouncedSave(nudgeSchedules);
+
+		return () => {
+			debouncedSave.cancel();
+		};
+	}, [nudgeSchedules, debouncedSave]);
 
 	const addSchedule = () => {
 		const newSchedule: NudgeSchedule = {
