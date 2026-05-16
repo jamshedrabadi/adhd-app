@@ -1,9 +1,9 @@
-import { View, Button, FlatList } from "react-native";
+import { View, Button, FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import debounce from "lodash.debounce";
 
-import { NudgeSchedule } from "../../../types/nudgeSchedule";
+import { NudgeSchedule } from "../../../types/NudgeSchedule";
 import { NudgeScheduleCard } from "../../../components/NudgeScheduleCard";
 import { colors } from "../../../theme/theme";
 
@@ -53,6 +53,7 @@ export const AttentionInterrupter = () => {
 	const addSchedule = () => {
 		const newSchedule: NudgeSchedule = {
 			id: Date.now().toString(),
+			name: `Schedule ${nudgeSchedules.length + 1}`,
 			enabled: true,
 			startTime: "13:00",
 			endTime: "17:00",
@@ -70,34 +71,47 @@ export const AttentionInterrupter = () => {
 	};
 
 	return (
-		<View
-			style={{
-				flex: 1,
-				padding: 24,
-				backgroundColor: colors.background,
-			}}
+		<KeyboardAvoidingView
+			style={{ flex: 1 }}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
-			<View style={{ marginBottom: 12 }}>
-				<Button title="Add Nudge Schedule" onPress={addSchedule} />
-			</View>
+			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+				<View
+					style={{
+						flex: 1,
+						padding: 24,
+						backgroundColor: colors.background,
+					}}
+				>
+					<View style={{ marginBottom: 12 }}>
+						<Button
+							title="Add Nudge Schedule"
+							onPress={addSchedule}
+						/>
+					</View>
 
-			<FlatList
-				data={nudgeSchedules}
-				keyExtractor={(item) => item.id}
-				contentContainerStyle={{
-					paddingTop: 12,
-					paddingBottom: 24,
-				}}
-				ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
-				renderItem={({ item, index }) => (
-					<NudgeScheduleCard
-						schedule={item}
-						index={index}
-						onUpdate={updateSchedule}
+					<FlatList
+						data={nudgeSchedules}
+						keyExtractor={(item) => item.id}
+						keyboardShouldPersistTaps="handled"
+						contentContainerStyle={{
+							paddingTop: 12,
+							paddingBottom: 120,
+						}}
+						ItemSeparatorComponent={() => (
+							<View style={{ height: 8 }} />
+						)}
+						renderItem={({ item, index }) => (
+							<NudgeScheduleCard
+								schedule={item}
+								index={index}
+								onUpdate={updateSchedule}
+							/>
+						)}
 					/>
-				)}
-			/>
-		</View>
+				</View>
+			</TouchableWithoutFeedback>
+		</KeyboardAvoidingView>
 	);
 };
 

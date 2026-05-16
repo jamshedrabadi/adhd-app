@@ -1,8 +1,8 @@
-import { View, Text, Switch, TextInput, Pressable, Animated, Easing } from "react-native";
+import { View, Text, Switch, TextInput, Pressable, Animated, Easing, Alert } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 
-import { NudgeSchedule } from "../types/nudgeSchedule";
+import { NudgeSchedule } from "../types/NudgeSchedule";
 import { colors } from "../theme/theme";
 
 type Props = {
@@ -11,42 +11,33 @@ type Props = {
 	onUpdate: (updated: NudgeSchedule) => void;
 };
 
-export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
+export const NudgeScheduleCard = ({
+	schedule,
+	index,
+	onUpdate,
+}: Props) => {
 	const [collapsed, setCollapsed] = useState(!schedule.enabled);
-	const [contentHeight, setContentHeight] = useState(0);
+	const [editingName, setEditingName] = useState(false);
 
 	// Animated value (0 = collapsed, 1 = expanded)
-	const animation = useRef(new Animated.Value(schedule.enabled ? 1 : 0)).current;
+	const animation = useRef(
+		new Animated.Value(collapsed ? 0 : 1),
+	).current;
 
 	// Animate when enabled changes
 	useEffect(() => {
 		Animated.timing(animation, {
 			toValue: collapsed ? 0 : 1,
-			duration: 250,
+			duration: 220,
 			easing: Easing.out(Easing.ease),
-			useNativeDriver: false,
+			useNativeDriver: true,
 		}).start();
 	}, [collapsed, animation]);
 
 	// Toggle manually
 	const toggleCollapse = () => {
-		const toValue = collapsed ? 1 : 0;
-
-		Animated.timing(animation, {
-			toValue,
-			duration: 250,
-			easing: Easing.out(Easing.ease),
-			useNativeDriver: false,
-		}).start();
-
-		setCollapsed(!collapsed);
+		setCollapsed((prev) => !prev);
 	};
-
-	// Interpolated height
-	const bodyHeight = animation.interpolate({
-		inputRange: [0, 1],
-		outputRange: [0, contentHeight],
-	});
 
 	return (
 		<View
@@ -74,29 +65,92 @@ export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 						flexDirection: "row",
 						alignItems: "center",
 						gap: 10,
+						flex: 1,
 					}}
 				>
 					<Switch
 						value={schedule.enabled}
-						onValueChange={(value) =>
-							onUpdate({ ...schedule, enabled: value })
-						}
+						onValueChange={(value) => {
+							if (!value) {
+								Alert.alert(
+									"Disable Schedule?",
+									"Nudges from this schedule will stop.",
+									[
+										{
+											text: "Cancel",
+											style: "cancel",
+										},
+										{
+											text: "Disable",
+											style: "destructive",
+											onPress: () =>
+												onUpdate({
+													...schedule,
+													enabled: false,
+												}),
+										},
+									],
+								);
+
+								return;
+							}
+
+							onUpdate({
+								...schedule,
+								enabled: true,
+							});
+						}}
 						trackColor={{
 							false: colors.surfaceAlt,
 							true: colors.accentMuted,
 						}}
-						thumbColor={schedule.enabled ? colors.accent : "#aaa"}
+						thumbColor={
+							schedule.enabled
+								? colors.accent
+								: "#aaa"
+						}
 					/>
 
-					<Text
-						style={{
-							color: colors.textPrimary,
-							fontSize: 16,
-							fontWeight: "600",
-						}}
-					>
-						Schedule {index + 1}
-					</Text>
+					{editingName ? (
+						<TextInput
+							value={schedule.name}
+							onChangeText={(text) =>
+								onUpdate({
+									...schedule,
+									name: text,
+								})
+							}
+							onBlur={() =>
+								setEditingName(false)
+							}
+							autoFocus
+							style={{
+								color: colors.textPrimary,
+								fontSize: 16,
+								fontWeight: "600",
+								borderBottomWidth: 1,
+								borderColor: colors.border,
+								minWidth: 140,
+								paddingVertical: 2,
+							}}
+						/>
+					) : (
+						<Pressable
+							onPress={() =>
+								setEditingName(true)
+							}
+						>
+							<Text
+								style={{
+									color: colors.textPrimary,
+									fontSize: 16,
+									fontWeight: "600",
+								}}
+							>
+								{schedule.name}
+							</Text>
+						</Pressable>
+					)}
 				</View>
 
 				{/* RIGHT: Chevron */}
@@ -109,43 +163,70 @@ export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 						alignItems: "center",
 					}}
 				>
-					<Ionicons
-						name={collapsed ? "chevron-down" : "chevron-up"}
-						size={22}
-						color={colors.textSecondary}
-					/>
+					<Animated.View
+						style={{
+							transform: [
+								{
+									rotate: animation.interpolate({
+										inputRange: [0, 1],
+										outputRange: ["0deg", "180deg"],
+									}),
+								},
+							],
+						}}
+					>
+						<Ionicons
+							name="chevron-down"
+							size={22}
+							color={colors.textSecondary}
+						/>
+					</Animated.View>
 				</Pressable>
 			</View>
 
 			{/* ANIMATED BODY */}
 			<Animated.View
 				style={{
+					opacity: animation,
+					transform: [
+						{
+							translateY: animation.interpolate({
+								inputRange: [0, 1],
+								outputRange: [-10, 0],
+							}),
+						},
+					],
+					maxHeight: collapsed ? 0 : 500,
 					overflow: "hidden",
-					height: bodyHeight,
-					position: "relative",
 				}}
 			>
 				<View
-					onLayout={(event) => {
-						setContentHeight(event.nativeEvent.layout.height);
-					}}
 					style={{
-						position: "absolute",
-						width: "100%",
 						paddingHorizontal: 16,
 						paddingBottom: 16,
 					}}
 				>
-					{/* Start Time */}
-					<Text style={{ color: colors.textSecondary }}>Start Time</Text>
+					<Text
+						style={{
+							color: colors.textSecondary,
+						}}
+					>
+						Start Time
+					</Text>
+
 					<TextInput
 						value={schedule.startTime}
 						onChangeText={(text) =>
-							onUpdate({ ...schedule, startTime: text })
+							onUpdate({
+								...schedule,
+								startTime: text,
+							})
 						}
 						editable={schedule.enabled}
 						placeholder="HH:MM"
-						placeholderTextColor={colors.textSecondary}
+						placeholderTextColor={
+							colors.textSecondary
+						}
 						style={{
 							borderBottomWidth: 1,
 							borderColor: colors.border,
@@ -155,17 +236,28 @@ export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 					/>
 
 					{/* End Time */}
-					<Text style={{ color: colors.textSecondary, marginTop: 12 }}>
+					<Text
+						style={{
+							color: colors.textSecondary,
+							marginTop: 12,
+						}}
+					>
 						End Time
 					</Text>
+
 					<TextInput
 						value={schedule.endTime}
 						onChangeText={(text) =>
-							onUpdate({ ...schedule, endTime: text })
+							onUpdate({
+								...schedule,
+								endTime: text,
+							})
 						}
 						editable={schedule.enabled}
 						placeholder="HH:MM"
-						placeholderTextColor={colors.textSecondary}
+						placeholderTextColor={
+							colors.textSecondary
+						}
 						style={{
 							borderBottomWidth: 1,
 							borderColor: colors.border,
@@ -175,17 +267,28 @@ export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 					/>
 
 					{/* Nudge Interval */}
-					<Text style={{ color: colors.textSecondary, marginTop: 12 }}>
+					<Text
+						style={{
+							color: colors.textSecondary,
+							marginTop: 12,
+						}}
+					>
 						Nudge Interval (minutes)
 					</Text>
+
 					<TextInput
 						value={schedule.nudgeInterval}
 						onChangeText={(text) =>
-							onUpdate({ ...schedule, nudgeInterval: text })
+							onUpdate({
+								...schedule,
+								nudgeInterval: text,
+							})
 						}
 						editable={schedule.enabled}
 						placeholder="10"
-						placeholderTextColor={colors.textSecondary}
+						placeholderTextColor={
+							colors.textSecondary
+						}
 						style={{
 							borderBottomWidth: 1,
 							borderColor: colors.border,
@@ -196,17 +299,28 @@ export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 					/>
 
 					{/* Sound */}
-					<Text style={{ color: colors.textSecondary, marginTop: 12 }}>
+					<Text
+						style={{
+							color: colors.textSecondary,
+							marginTop: 12,
+						}}
+					>
 						Sound
 					</Text>
+
 					<TextInput
 						value={schedule.sound}
 						onChangeText={(text) =>
-							onUpdate({ ...schedule, sound: text })
+							onUpdate({
+								...schedule,
+								sound: text,
+							})
 						}
 						editable={schedule.enabled}
 						placeholder="default"
-						placeholderTextColor={colors.textSecondary}
+						placeholderTextColor={
+							colors.textSecondary
+						}
 						style={{
 							borderBottomWidth: 1,
 							borderColor: colors.border,
@@ -219,3 +333,5 @@ export const NudgeScheduleCard = ({ schedule, index, onUpdate }: Props) => {
 		</View>
 	);
 };
+
+export default NudgeScheduleCard;
