@@ -1,5 +1,15 @@
-import { View, Button, FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from "react-native";
+import {
+	View,
+	Button,
+	FlatList,
+	KeyboardAvoidingView,
+	TouchableWithoutFeedback,
+	Keyboard,
+	Platform,
+} from "react-native";
+
 import { useEffect, useRef, useState } from "react";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import debounce from "lodash.debounce";
 
@@ -10,25 +20,49 @@ import { colors } from "../../../theme/theme";
 const STORAGE_KEY = "NUDGE_SCHEDULES";
 
 export const AttentionInterrupter = () => {
-	const [nudgeSchedules, setNudgeSchedules] = useState<NudgeSchedule[]>([]);
+	const [nudgeSchedules, setNudgeSchedules] = useState<
+		NudgeSchedule[]
+	>([]);
 
-	// Load on mount
+	// Load schedules
 	useEffect(() => {
 		const loadNudgeSchedules = async () => {
 			try {
-				const data = await AsyncStorage.getItem(STORAGE_KEY);
+				const data = await AsyncStorage.getItem(
+					STORAGE_KEY,
+				);
+
 				if (data) {
-					setNudgeSchedules(JSON.parse(data));
+					const parsedSchedules =
+						JSON.parse(data);
+
+					const schedulesWithNames =
+						parsedSchedules.map(
+							(
+								schedule: NudgeSchedule,
+								index: number,
+							) => ({
+								...schedule,
+								name: schedule.name ?? `Schedule ${index + 1}`,
+							}),
+						);
+
+					setNudgeSchedules(
+						schedulesWithNames,
+					);
 				}
 			} catch (error) {
-				console.error("Error loading nudge schedules", error);
+				console.error(
+					"Error loading schedules",
+					error,
+				);
 			}
 		};
 
 		loadNudgeSchedules();
 	}, []);
 
-	// Save whenever nudge schedules change
+	// Debounced save
 	const debouncedSave = useRef(
 		debounce(async (value: NudgeSchedule[]) => {
 			try {
@@ -37,7 +71,10 @@ export const AttentionInterrupter = () => {
 					JSON.stringify(value),
 				);
 			} catch (error) {
-				console.error("Error saving nudge schedules", error);
+				console.error(
+					"Error saving schedules",
+					error,
+				);
 			}
 		}, 500),
 	).current;
@@ -61,29 +98,49 @@ export const AttentionInterrupter = () => {
 			sound: "default",
 		};
 
-		setNudgeSchedules((prev) => [...prev, newSchedule]);
+		setNudgeSchedules((prev) => [
+			...prev,
+			newSchedule,
+		]);
 	};
 
-	const updateSchedule = (updated: NudgeSchedule) => {
+	const updateSchedule = (
+		updated: NudgeSchedule,
+	) => {
 		setNudgeSchedules((prev) =>
-			prev.map((s) => (s.id === updated.id ? updated : s)),
+			prev.map((schedule) =>
+				schedule.id === updated.id
+					? updated
+					: schedule,
+			),
 		);
 	};
 
 	return (
 		<KeyboardAvoidingView
 			style={{ flex: 1 }}
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			behavior={
+				Platform.OS === "ios"
+					? "padding"
+					: "height"
+			}
 		>
-			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+			<TouchableWithoutFeedback
+				onPress={Keyboard.dismiss}
+			>
 				<View
 					style={{
 						flex: 1,
 						padding: 24,
-						backgroundColor: colors.background,
+						backgroundColor:
+							colors.background,
 					}}
 				>
-					<View style={{ marginBottom: 12 }}>
+					<View
+						style={{
+							marginBottom: 12,
+						}}
+					>
 						<Button
 							title="Add Nudge Schedule"
 							onPress={addSchedule}
@@ -92,20 +149,31 @@ export const AttentionInterrupter = () => {
 
 					<FlatList
 						data={nudgeSchedules}
-						keyExtractor={(item) => item.id}
+						keyExtractor={(item) =>
+							item.id
+						}
 						keyboardShouldPersistTaps="handled"
 						contentContainerStyle={{
 							paddingTop: 12,
 							paddingBottom: 120,
 						}}
 						ItemSeparatorComponent={() => (
-							<View style={{ height: 8 }} />
+							<View
+								style={{
+									height: 8,
+								}}
+							/>
 						)}
-						renderItem={({ item, index }) => (
+						renderItem={({
+							item,
+							index,
+						}) => (
 							<NudgeScheduleCard
 								schedule={item}
 								index={index}
-								onUpdate={updateSchedule}
+								onUpdate={
+									updateSchedule
+								}
 							/>
 						)}
 					/>

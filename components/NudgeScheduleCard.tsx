@@ -1,9 +1,32 @@
-import { View, Text, Switch, TextInput, Pressable, Animated, Easing, Alert } from "react-native";
+import {
+	View,
+	Text,
+	Switch,
+	TextInput,
+	Pressable,
+	Animated,
+	Alert,
+	LayoutAnimation,
+	Platform,
+	UIManager,
+} from "react-native";
+
 import { useEffect, useRef, useState } from "react";
+
 import { Ionicons } from "@expo/vector-icons";
 
 import { NudgeSchedule } from "../types/NudgeSchedule";
 import { colors } from "../theme/theme";
+
+// Enable LayoutAnimation on Android
+if (
+	Platform.OS === "android" &&
+	UIManager.setLayoutAnimationEnabledExperimental
+) {
+	UIManager.setLayoutAnimationEnabledExperimental(
+		true,
+	);
+}
 
 type Props = {
 	schedule: NudgeSchedule;
@@ -16,26 +39,32 @@ export const NudgeScheduleCard = ({
 	index,
 	onUpdate,
 }: Props) => {
-	const [collapsed, setCollapsed] = useState(!schedule.enabled);
-	const [editingName, setEditingName] = useState(false);
+	const [collapsed, setCollapsed] = useState(
+		!schedule.enabled,
+	);
 
-	// Animated value (0 = collapsed, 1 = expanded)
-	const animation = useRef(
+	const [editingName, setEditingName] =
+		useState(false);
+
+	// Fade animation
+	const fadeAnim = useRef(
 		new Animated.Value(collapsed ? 0 : 1),
 	).current;
 
-	// Animate when enabled changes
+	// Animate collapse/expand
 	useEffect(() => {
-		Animated.timing(animation, {
+		Animated.timing(fadeAnim, {
 			toValue: collapsed ? 0 : 1,
-			duration: 220,
-			easing: Easing.out(Easing.ease),
+			duration: 180,
 			useNativeDriver: true,
 		}).start();
-	}, [collapsed, animation]);
+	}, [collapsed, fadeAnim]);
 
-	// Toggle manually
 	const toggleCollapse = () => {
+		LayoutAnimation.configureNext(
+			LayoutAnimation.Presets.easeInEaseOut,
+		);
+
 		setCollapsed((prev) => !prev);
 	};
 
@@ -163,49 +192,30 @@ export const NudgeScheduleCard = ({
 						alignItems: "center",
 					}}
 				>
-					<Animated.View
-						style={{
-							transform: [
-								{
-									rotate: animation.interpolate({
-										inputRange: [0, 1],
-										outputRange: ["0deg", "180deg"],
-									}),
-								},
-							],
-						}}
-					>
-						<Ionicons
-							name="chevron-down"
-							size={22}
-							color={colors.textSecondary}
-						/>
-					</Animated.View>
+					<Ionicons
+						name={
+							collapsed
+								? "chevron-down"
+								: "chevron-up"
+						}
+						size={22}
+						color={
+							colors.textSecondary
+						}
+					/>
 				</Pressable>
 			</View>
 
-			{/* ANIMATED BODY */}
-			<Animated.View
-				style={{
-					opacity: animation,
-					transform: [
-						{
-							translateY: animation.interpolate({
-								inputRange: [0, 1],
-								outputRange: [-10, 0],
-							}),
-						},
-					],
-					maxHeight: collapsed ? 0 : 500,
-					overflow: "hidden",
-				}}
-			>
-				<View
+			{/* COLLAPSIBLE BODY */}
+			{!collapsed && (
+				<Animated.View
 					style={{
+						opacity: fadeAnim,
 						paddingHorizontal: 16,
 						paddingBottom: 16,
 					}}
 				>
+					{/* START TIME */}
 					<Text
 						style={{
 							color: colors.textSecondary,
@@ -235,7 +245,7 @@ export const NudgeScheduleCard = ({
 						}}
 					/>
 
-					{/* End Time */}
+					{/* END TIME */}
 					<Text
 						style={{
 							color: colors.textSecondary,
@@ -266,7 +276,7 @@ export const NudgeScheduleCard = ({
 						}}
 					/>
 
-					{/* Nudge Interval */}
+					{/* INTERVAL */}
 					<Text
 						style={{
 							color: colors.textSecondary,
@@ -298,7 +308,7 @@ export const NudgeScheduleCard = ({
 						keyboardType="numeric"
 					/>
 
-					{/* Sound */}
+					{/* SOUND */}
 					<Text
 						style={{
 							color: colors.textSecondary,
@@ -328,8 +338,8 @@ export const NudgeScheduleCard = ({
 							paddingVertical: 4,
 						}}
 					/>
-				</View>
-			</Animated.View>
+				</Animated.View>
+			)}
 		</View>
 	);
 };
