@@ -185,6 +185,7 @@ export const NudgeScheduleCard = ({
 				{/* RIGHT: Chevron */}
 				<Pressable
 					onPress={toggleCollapse}
+					hitSlop={8}
 					style={{
 						width: 44,
 						height: 44,
@@ -208,6 +209,7 @@ export const NudgeScheduleCard = ({
 
 			{/* COLLAPSIBLE BODY */}
 			<Animated.View
+				pointerEvents={collapsed ? "none" : "auto"}
 				style={[
 					{
 						overflow: "hidden",
