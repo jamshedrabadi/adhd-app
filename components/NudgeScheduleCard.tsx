@@ -1,6 +1,7 @@
 import {
 	View,
 	Switch,
+	Text,
 	TextInput,
 	Pressable,
 	Alert,
@@ -23,6 +24,7 @@ import { colors } from "../theme/theme";
 import { TimeField } from "./TimeField";
 import { IntervalSelector } from "./IntervalSelector";
 import { SoundSelector } from "./SoundSelector";
+import { validateSchedule } from "../utils/validateSchedule";
 
 type Props = {
 	schedule: NudgeSchedule;
@@ -83,6 +85,8 @@ export const NudgeScheduleCard = ({
 		};
 	});
 
+	const validation = validateSchedule(schedule);
+
 	const handleDelete = () => {
 		Alert.alert(
 			"Delete Schedule",
@@ -141,7 +145,9 @@ export const NudgeScheduleCard = ({
 				backgroundColor: colors.surface,
 				borderRadius: 12,
 				borderWidth: 1,
-				borderColor: colors.border,
+				borderColor: validation.valid
+					? colors.border
+					: colors.warning,
 				opacity: schedule.enabled ? 1 : 0.5, // dim when disabled
 				overflow: "hidden",
 			}}
@@ -332,6 +338,24 @@ export const NudgeScheduleCard = ({
 					/>
 				</View>
 			</Animated.View>
+
+			{!validation.valid && (
+				<View
+					style={{
+						paddingHorizontal: 16,
+						paddingBottom: 16,
+					}}
+				>
+					<Text
+						style={{
+							color: colors.warning,
+							fontSize: 13,
+						}}
+					>
+						{validation.message}
+					</Text>
+				</View>
+			)}
 		</View>
 	);
 };
