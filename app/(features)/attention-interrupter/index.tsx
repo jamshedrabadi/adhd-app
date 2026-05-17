@@ -28,34 +28,38 @@ export const AttentionInterrupter = () => {
 	useEffect(() => {
 		const loadNudgeSchedules = async () => {
 			try {
-				const data = await AsyncStorage.getItem(
-					STORAGE_KEY,
-				);
+				const data = await AsyncStorage.getItem(STORAGE_KEY);
 
 				if (data) {
-					const parsedSchedules =
-						JSON.parse(data);
+					const parsedSchedules = JSON.parse(data);
 
-					const schedulesWithNames =
+					const normalizedSchedules: NudgeSchedule[] =
 						parsedSchedules.map(
 							(
-								schedule: NudgeSchedule,
+								schedule: Partial<NudgeSchedule>,
 								index: number,
 							) => ({
-								...schedule,
-								name: schedule.name ?? `Schedule ${index + 1}`,
+								id: schedule.id ?? Date.now().toString(),
+								name:
+									schedule.name ??
+									`Schedule ${index + 1}`,
+								enabled:
+									schedule.enabled ?? true,
+								startTime:
+									schedule.startTime ?? "13:00",
+								endTime:
+									schedule.endTime ?? "17:00",
+								nudgeInterval:
+									schedule.nudgeInterval ?? "10",
+								sound:
+									schedule.sound ?? "default",
 							}),
 						);
 
-					setNudgeSchedules(
-						schedulesWithNames,
-					);
+					setNudgeSchedules(normalizedSchedules);
 				}
 			} catch (error) {
-				console.error(
-					"Error loading schedules",
-					error,
-				);
+				console.error("Error loading schedules", error);
 			}
 		};
 
@@ -71,10 +75,7 @@ export const AttentionInterrupter = () => {
 					JSON.stringify(value),
 				);
 			} catch (error) {
-				console.error(
-					"Error saving schedules",
-					error,
-				);
+				console.error("Error saving schedules", error);
 			}
 		}, 500),
 	).current;
@@ -116,6 +117,12 @@ export const AttentionInterrupter = () => {
 		);
 	};
 
+	const deleteSchedule = (id: string) => {
+		setNudgeSchedules((prev) =>
+			prev.filter((schedule) => schedule.id !== id),
+		);
+	};
+
 	return (
 		<KeyboardAvoidingView
 			style={{ flex: 1 }}
@@ -132,8 +139,7 @@ export const AttentionInterrupter = () => {
 					style={{
 						flex: 1,
 						padding: 24,
-						backgroundColor:
-							colors.background,
+						backgroundColor: colors.background,
 					}}
 				>
 					<View
@@ -171,9 +177,8 @@ export const AttentionInterrupter = () => {
 							<NudgeScheduleCard
 								schedule={item}
 								index={index}
-								onUpdate={
-									updateSchedule
-								}
+								onUpdate={updateSchedule}
+								onDelete={deleteSchedule}
 							/>
 						)}
 					/>

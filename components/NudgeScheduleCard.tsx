@@ -26,18 +26,17 @@ type Props = {
 	schedule: NudgeSchedule;
 	index: number;
 	onUpdate: (updated: NudgeSchedule) => void;
+	onDelete: (id: string) => void;
 };
 
 export const NudgeScheduleCard = ({
 	schedule,
 	index,
 	onUpdate,
+	onDelete,
 }: Props) => {
-	const [collapsed, setCollapsed] = useState(
-		!schedule.enabled,
-	);
-	const [contentHeight, setContentHeight] =
-		useState(0);
+	const [collapsed, setCollapsed] = useState(!schedule.enabled);
+	const [contentHeight, setContentHeight] = useState(0);
 
 	const progress = useSharedValue(
 		schedule.enabled ? 1 : 0,
@@ -81,6 +80,26 @@ export const NudgeScheduleCard = ({
 			],
 		};
 	});
+
+	const handleDelete = () => {
+		Alert.alert(
+			"Delete Schedule",
+			`Are you sure you want to delete "${schedule.name}"?`,
+			[
+				{
+					text: "Cancel",
+					style: "cancel",
+				},
+				{
+					text: "Delete",
+					style: "destructive",
+					onPress: () => {
+						onDelete(schedule.id);
+					},
+				},
+			],
+		);
+	};
 
 	const handleEnabledToggle = (value: boolean) => {
 		if (!value) {
@@ -159,8 +178,7 @@ export const NudgeScheduleCard = ({
 
 					<TextInput
 						value={
-							schedule.name ||
-							`Schedule ${index + 1}`
+							schedule.name || `Schedule ${index + 1}`
 						}
 						onChangeText={(text) =>
 							onUpdate({
@@ -182,34 +200,65 @@ export const NudgeScheduleCard = ({
 					/>
 				</View>
 
-				{/* RIGHT: Chevron */}
-				<Pressable
-					onPress={toggleCollapse}
-					hitSlop={8}
+				{/* RIGHT ACTIONS */}
+				<View
 					style={{
-						width: 44,
-						height: 44,
-						justifyContent: "center",
+						flexDirection: "row",
 						alignItems: "center",
 					}}
 				>
-					<Animated.View
-						style={animatedChevronStyle}
+					{/* DELETE */}
+					<Pressable
+						onPress={handleDelete}
+						hitSlop={8}
+						android_disableSound
+						style={{
+							width: 44,
+							height: 44,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
 					>
 						<Ionicons
-							name="chevron-down"
-							size={22}
-							color={
-								colors.textSecondary
-							}
+							name="trash-outline"
+							size={20}
+							color={colors.warning}
 						/>
-					</Animated.View>
-				</Pressable>
+					</Pressable>
+
+					{/* CHEVRON */}
+					<Pressable
+						onPress={toggleCollapse}
+						hitSlop={8}
+						style={{
+							width: 44,
+							height: 44,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Animated.View
+							style={animatedChevronStyle}
+						>
+							<Ionicons
+								name="chevron-down"
+								size={22}
+								color={
+									colors.textSecondary
+								}
+							/>
+						</Animated.View>
+					</Pressable>
+				</View>
 			</View>
 
 			{/* COLLAPSIBLE BODY */}
 			<Animated.View
-				pointerEvents={collapsed ? "none" : "auto"}
+				pointerEvents={
+					collapsed
+						? "none"
+						: "auto"
+				}
 				style={[
 					{
 						overflow: "hidden",
