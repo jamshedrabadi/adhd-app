@@ -4,7 +4,7 @@ import {
 	Pressable,
 } from "react-native";
 
-import { colors } from "../theme/theme";
+import { useTheme } from "../theme/ThemeProvider";
 
 type Props = {
 	value: string;
@@ -25,6 +25,8 @@ export const IntervalSelector = ({
 	onChange,
 	disabled = false,
 }: Props) => {
+	const { colors } = useTheme();
+
 	return (
 		<View style={{ marginTop: 16 }}>
 			<Text

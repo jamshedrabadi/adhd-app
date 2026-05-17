@@ -13,11 +13,13 @@ import debounce from "lodash.debounce";
 
 import { NudgeSchedule } from "../../../types/NudgeSchedule";
 import { NudgeScheduleCard } from "../../../components/NudgeScheduleCard";
-import { colors } from "../../../theme/theme";
+import { useTheme } from "../../../theme/ThemeProvider";
 
 const STORAGE_KEY = "NUDGE_SCHEDULES";
 
 export const AttentionInterrupter = () => {
+	const { colors } = useTheme();
+
 	const [nudgeSchedules, setNudgeSchedules] = useState<
 		NudgeSchedule[]
 	>([]);

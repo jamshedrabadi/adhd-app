@@ -20,7 +20,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { NudgeSchedule } from "../types/NudgeSchedule";
-import { colors } from "../theme/theme";
+import { useTheme } from "../theme/ThemeProvider";
 import { TimeField } from "./TimeField";
 import { IntervalSelector } from "./IntervalSelector";
 import { SoundSelector } from "./SoundSelector";
@@ -39,6 +39,8 @@ export const NudgeScheduleCard = ({
 	onUpdate,
 	onDelete,
 }: Props) => {
+	const { colors } = useTheme();
+
 	const [collapsed, setCollapsed] = useState(!schedule.enabled);
 	const [contentHeight, setContentHeight] = useState(0);
 

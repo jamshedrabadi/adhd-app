@@ -4,7 +4,7 @@ import {
 	Pressable,
 } from "react-native";
 
-import { colors } from "../theme/theme";
+import { useTheme } from "../theme/ThemeProvider";
 import { NUDGE_SOUNDS } from "../utils/sounds";
 
 type Props = {
@@ -18,6 +18,8 @@ export const SoundSelector = ({
 	onChange,
 	disabled = false,
 }: Props) => {
+	const { colors } = useTheme();
+
 	return (
 		<View style={{ marginTop: 16 }}>
 			<Text

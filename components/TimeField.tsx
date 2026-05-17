@@ -11,7 +11,7 @@ import DateTimePicker, {
 	DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 
-import { colors } from "../theme/theme";
+import { useTheme } from "../theme/ThemeProvider";
 
 type Props = {
 	label: string;
@@ -26,6 +26,8 @@ export const TimeField = ({
 	onChange,
 	disabled = false,
 }: Props) => {
+	const { colors } = useTheme();
+
 	const [showPicker, setShowPicker] = useState(false);
 
 	// Convert "13:00" -> Date
