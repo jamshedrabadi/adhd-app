@@ -3,8 +3,6 @@ import {
 	Button,
 	FlatList,
 	KeyboardAvoidingView,
-	TouchableWithoutFeedback,
-	Keyboard,
 	Platform,
 } from "react-native";
 
@@ -39,10 +37,10 @@ export const AttentionInterrupter = () => {
 								schedule: Partial<NudgeSchedule>,
 								index: number,
 							) => ({
-								id: schedule.id ?? Date.now().toString(),
+								id:
+									schedule.id ?? Date.now().toString(),
 								name:
-									schedule.name ??
-									`Schedule ${index + 1}`,
+									schedule.name ?? `Schedule ${index + 1}`,
 								enabled:
 									schedule.enabled ?? true,
 								startTime:
@@ -52,7 +50,7 @@ export const AttentionInterrupter = () => {
 								nudgeInterval:
 									schedule.nudgeInterval ?? "10",
 								sound:
-									schedule.sound ?? "default",
+									schedule.sound ?? "soft-chime",
 							}),
 						);
 
@@ -96,7 +94,7 @@ export const AttentionInterrupter = () => {
 			startTime: "13:00",
 			endTime: "17:00",
 			nudgeInterval: "10",
-			sound: "default",
+			sound: "soft-chime",
 		};
 
 		setNudgeSchedules((prev) => [
@@ -132,58 +130,55 @@ export const AttentionInterrupter = () => {
 					: "height"
 			}
 		>
-			<TouchableWithoutFeedback
-				onPress={Keyboard.dismiss}
+			<View
+				style={{
+					flex: 1,
+					padding: 24,
+					backgroundColor: colors.background,
+				}}
 			>
 				<View
 					style={{
-						flex: 1,
-						padding: 24,
-						backgroundColor: colors.background,
+						marginBottom: 12,
 					}}
 				>
-					<View
-						style={{
-							marginBottom: 12,
-						}}
-					>
-						<Button
-							title="Add Nudge Schedule"
-							onPress={addSchedule}
-						/>
-					</View>
-
-					<FlatList
-						data={nudgeSchedules}
-						keyExtractor={(item) =>
-							item.id
-						}
-						keyboardShouldPersistTaps="handled"
-						contentContainerStyle={{
-							paddingTop: 12,
-							paddingBottom: 120,
-						}}
-						ItemSeparatorComponent={() => (
-							<View
-								style={{
-									height: 8,
-								}}
-							/>
-						)}
-						renderItem={({
-							item,
-							index,
-						}) => (
-							<NudgeScheduleCard
-								schedule={item}
-								index={index}
-								onUpdate={updateSchedule}
-								onDelete={deleteSchedule}
-							/>
-						)}
+					<Button
+						title="Add Nudge Schedule"
+						onPress={addSchedule}
 					/>
 				</View>
-			</TouchableWithoutFeedback>
+
+				<FlatList
+					data={nudgeSchedules}
+					keyboardDismissMode="on-drag"
+					keyExtractor={(item) =>
+						item.id
+					}
+					keyboardShouldPersistTaps="handled"
+					contentContainerStyle={{
+						paddingTop: 12,
+						paddingBottom: 120,
+					}}
+					ItemSeparatorComponent={() => (
+						<View
+							style={{
+								height: 8,
+							}}
+						/>
+					)}
+					renderItem={({
+						item,
+						index,
+					}) => (
+						<NudgeScheduleCard
+							schedule={item}
+							index={index}
+							onUpdate={updateSchedule}
+							onDelete={deleteSchedule}
+						/>
+					)}
+				/>
+			</View>
 		</KeyboardAvoidingView>
 	);
 };

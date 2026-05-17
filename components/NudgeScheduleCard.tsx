@@ -1,6 +1,5 @@
 import {
 	View,
-	Text,
 	Switch,
 	TextInput,
 	Pressable,
@@ -21,6 +20,9 @@ import Animated, {
 
 import { NudgeSchedule } from "../types/NudgeSchedule";
 import { colors } from "../theme/theme";
+import { TimeField } from "./TimeField";
+import { IntervalSelector } from "./IntervalSelector";
+import { SoundSelector } from "./SoundSelector";
 
 type Props = {
 	schedule: NudgeSchedule;
@@ -280,127 +282,53 @@ export const NudgeScheduleCard = ({
 					}}
 				>
 					{/* START TIME */}
-					<Text
-						style={{
-							color: colors.textSecondary,
-						}}
-					>
-						Start Time
-					</Text>
-
-					<TextInput
+					<TimeField
+						label="Start Time"
 						value={schedule.startTime}
-						onChangeText={(text) =>
+						disabled={!schedule.enabled}
+						onChange={(time) =>
 							onUpdate({
 								...schedule,
-								startTime: text,
+								startTime: time,
 							})
 						}
-						editable={schedule.enabled}
-						placeholder="HH:MM"
-						placeholderTextColor={
-							colors.textSecondary
-						}
-						style={{
-							borderBottomWidth: 1,
-							borderColor: colors.border,
-							color: colors.textPrimary,
-							paddingVertical: 6,
-						}}
 					/>
 
 					{/* END TIME */}
-					<Text
-						style={{
-							color: colors.textSecondary,
-							marginTop: 16,
-						}}
-					>
-						End Time
-					</Text>
-
-					<TextInput
+					<TimeField
+						label="End Time"
 						value={schedule.endTime}
-						onChangeText={(text) =>
+						disabled={!schedule.enabled}
+						onChange={(time) =>
 							onUpdate({
 								...schedule,
-								endTime: text,
+								endTime: time,
 							})
 						}
-						editable={schedule.enabled}
-						placeholder="HH:MM"
-						placeholderTextColor={
-							colors.textSecondary
-						}
-						style={{
-							borderBottomWidth: 1,
-							borderColor: colors.border,
-							color: colors.textPrimary,
-							paddingVertical: 6,
-						}}
 					/>
 
 					{/* INTERVAL */}
-					<Text
-						style={{
-							color: colors.textSecondary,
-							marginTop: 16,
-						}}
-					>
-						Nudge Interval (minutes)
-					</Text>
-
-					<TextInput
+					<IntervalSelector
 						value={schedule.nudgeInterval}
-						onChangeText={(text) =>
+						disabled={!schedule.enabled}
+						onChange={(value) =>
 							onUpdate({
 								...schedule,
-								nudgeInterval: text,
+								nudgeInterval: value,
 							})
 						}
-						editable={schedule.enabled}
-						placeholder="10"
-						placeholderTextColor={
-							colors.textSecondary
-						}
-						style={{
-							borderBottomWidth: 1,
-							borderColor: colors.border,
-							color: colors.textPrimary,
-							paddingVertical: 6,
-						}}
-						keyboardType="numeric"
 					/>
 
 					{/* SOUND */}
-					<Text
-						style={{
-							color: colors.textSecondary,
-							marginTop: 16,
-						}}
-					>
-						Sound
-					</Text>
-
-					<TextInput
+					<SoundSelector
 						value={schedule.sound}
-						onChangeText={(text) =>
+						disabled={!schedule.enabled}
+						onChange={(value) =>
 							onUpdate({
 								...schedule,
-								sound: text,
+								sound: value,
 							})
 						}
-						editable={schedule.enabled}
-						placeholder="default"
-						placeholderTextColor={
-							colors.textSecondary
-						}
-						style={{
-							borderBottomWidth: 1,
-							borderColor: colors.border,
-							color: colors.textPrimary,
-							paddingVertical: 6,
-						}}
 					/>
 				</View>
 			</Animated.View>
