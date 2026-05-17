@@ -1,5 +1,7 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import {
 	ThemeProvider,
@@ -7,7 +9,11 @@ import {
 } from "../theme/ThemeProvider";
 
 const RootLayoutContent = () => {
-	const { colors, mode } = useTheme();
+	const {
+		colors,
+		mode,
+		toggleTheme,
+	} = useTheme();
 
 	return (
 		<>
@@ -31,11 +37,35 @@ const RootLayoutContent = () => {
 					contentStyle: {
 						backgroundColor: colors.background,
 					},
+
+					headerRight: () => (
+						<Pressable
+							onPress={toggleTheme}
+							hitSlop={8}
+							style={{
+								width: 36,
+								height: 36,
+								borderRadius: 18,
+								justifyContent: "center",
+								alignItems: "center",
+							}}
+						>
+							<Ionicons
+								name={
+									mode === "dark"
+										? "sunny-outline"
+										: "moon-outline"
+								}
+								size={22}
+								color={colors.textPrimary}
+							/>
+						</Pressable>
+					),
 				}}
 			>
 				<Stack.Screen
 					name="index"
-					options={{ title: "Home" }}
+					options={{ headerTitle: "" }}
 				/>
 
 				<Stack.Screen

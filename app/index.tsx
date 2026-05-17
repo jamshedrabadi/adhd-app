@@ -1,74 +1,80 @@
 import { useRouter } from "expo-router";
-import { Button, Text, View, Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Text, View, Pressable } from "react-native";
 
 import { useTheme } from "../theme/ThemeProvider";
 
 export const Index = () => {
 	const router = useRouter();
 
-	const {
-		colors,
-		mode,
-		toggleTheme,
-	} = useTheme();
+	const { colors } = useTheme();
 
 	return (
 		<View
 			style={{
 				flex: 1,
 				padding: 24,
-				justifyContent: "center",
-				alignItems: "center",
 				backgroundColor: colors.background,
 			}}
 		>
-			<View
+			<Text
 				style={{
-					width: "100%",
-					alignItems: "flex-end",
-					marginBottom: 24,
+					fontSize: 32,
+					fontWeight: "700",
+					color: colors.textPrimary,
+					marginBottom: 8,
 				}}
 			>
-				<Pressable
-					onPress={toggleTheme}
-					hitSlop={8}
-					style={{
-						width: 44,
-						height: 44,
-						borderRadius: 22,
-						backgroundColor:
-							colors.surfaceAlt,
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-				>
-					<Ionicons
-						name={
-							mode === "dark"
-								? "sunny-outline"
-								: "moon-outline"
-						}
-						size={22}
-						color={colors.textPrimary}
-					/>
-				</Pressable>
-			</View>
+				Hello
+			</Text>
 
 			<Text
 				style={{
-					fontSize: 24,
-					marginBottom: 24,
-					color: colors.textPrimary,
+					fontSize: 16,
+					color: colors.textSecondary,
+					marginBottom: 32,
 				}}
 			>
-				Hello!
+				Choose a feature
 			</Text>
 
-			<Button
-				title="Attention Interrupter"
-				onPress={() => router.push("/(features)/attention-interrupter")}
-			/>
+			<Pressable
+				onPress={() =>
+					router.push(
+						"/(features)/attention-interrupter",
+					)
+				}
+				style={{
+					backgroundColor:
+						colors.surface,
+					borderRadius: 16,
+					borderWidth: 1,
+					borderColor: colors.border,
+					padding: 20,
+				}}
+			>
+				<Text
+					style={{
+						color:
+							colors.textPrimary,
+						fontSize: 18,
+						fontWeight: "600",
+					}}
+				>
+					Attention Interrupter
+				</Text>
+
+				<Text
+					style={{
+						color:
+							colors.textSecondary,
+						marginTop: 6,
+					}}
+				>
+					Periodic nudges to regain
+					time awareness while
+					focusing.
+				</Text>
+			</Pressable>
 		</View>
 	);
 };
