@@ -25,6 +25,7 @@ import { TimeField } from "./TimeField";
 import { IntervalSelector } from "./IntervalSelector";
 import { SoundSelector } from "./SoundSelector";
 import { validateSchedule } from "../utils/validateSchedule";
+import { generateTriggers } from "../utils/generateTriggers";
 
 type Props = {
 	schedule: NudgeSchedule;
@@ -88,6 +89,8 @@ export const NudgeScheduleCard = ({
 	});
 
 	const validation = validateSchedule(schedule);
+
+	const triggers = generateTriggers(schedule);
 
 	const handleDelete = () => {
 		Alert.alert(
@@ -338,6 +341,33 @@ export const NudgeScheduleCard = ({
 							})
 						}
 					/>
+
+					{/* GENERATED NUDGES */}
+					<View
+						style={{
+							marginTop: 20,
+						}}
+					>
+						<Text
+							style={{
+								color: colors.textSecondary,
+								fontSize: 13,
+								marginBottom: 6,
+							}}
+						>
+							Generated Nudges
+						</Text>
+
+						<Text
+							style={{
+								color: colors.textPrimary,
+								fontSize: 14,
+								lineHeight: 22,
+							}}
+						>
+							{triggers.join(", ")}
+						</Text>
+					</View>
 				</View>
 			</Animated.View>
 

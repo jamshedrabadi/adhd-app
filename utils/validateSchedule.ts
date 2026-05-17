@@ -14,11 +14,10 @@ export const validateSchedule = (
 		schedule.nudgeInterval,
 	);
 
-	if (interval >= duration) {
+	if (interval > duration) {
 		return {
 			valid: false,
-			message:
-				"Interval must be shorter than the schedule duration.",
+			message: "Interval must be shorter than the schedule duration.",
 		};
 	}
 
