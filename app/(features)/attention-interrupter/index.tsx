@@ -14,6 +14,7 @@ import debounce from "lodash.debounce";
 import { NudgeSchedule } from "../../../types/NudgeSchedule";
 import { NudgeScheduleCard } from "../../../components/NudgeScheduleCard";
 import { useTheme } from "../../../theme/ThemeProvider";
+import { sendTestNotification } from "../../../utils/notifications";
 
 const STORAGE_KEY = "NUDGE_SCHEDULES";
 
@@ -139,13 +140,30 @@ export const AttentionInterrupter = () => {
 			>
 				<View
 					style={{
+						flexDirection: "row",
+						gap: 12,
 						marginBottom: 12,
 					}}
 				>
-					<Button
-						title="Add Nudge Schedule"
-						onPress={addSchedule}
-					/>
+					<View style={{ flex: 1 }}>
+						<Button
+							title="Add Nudge Schedule"
+							onPress={addSchedule}
+						/>
+					</View>
+
+					<View style={{ flex: 1 }}>
+						<Button
+							title="Send Test Nudge"
+							onPress={async () => {
+								try {
+									await sendTestNotification();
+								} catch (error) {
+									console.error("Notification error", error);
+								}
+							}}
+						/>
+					</View>
 				</View>
 
 				<FlatList
