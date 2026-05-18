@@ -33,28 +33,27 @@ export const AttentionInterrupter = () => {
 				if (data) {
 					const parsedSchedules = JSON.parse(data);
 
-					const normalizedSchedules: NudgeSchedule[] =
-						parsedSchedules.map(
-							(
-								schedule: Partial<NudgeSchedule>,
-								index: number,
-							) => ({
-								id:
-									schedule.id ?? Date.now().toString(),
-								name:
-									schedule.name ?? `Schedule ${index + 1}`,
-								enabled:
-									schedule.enabled ?? true,
-								startTime:
-									schedule.startTime ?? "13:00",
-								endTime:
-									schedule.endTime ?? "17:00",
-								nudgeInterval:
-									schedule.nudgeInterval ?? "10",
-								sound:
-									schedule.sound ?? "soft-chime",
-							}),
-						);
+					const normalizedSchedules: NudgeSchedule[] = parsedSchedules.map(
+						(
+							schedule: Partial<NudgeSchedule>,
+							index: number,
+						) => ({
+							id:
+								schedule.id ?? Date.now().toString(),
+							name:
+								schedule.name ?? `Schedule ${index + 1}`,
+							enabled:
+								schedule.enabled ?? true,
+							startTime:
+								schedule.startTime ?? "13:00",
+							endTime:
+								schedule.endTime ?? "17:00",
+							nudgeInterval:
+								schedule.nudgeInterval ?? 10,
+							sound:
+								schedule.sound ?? "soft-chime",
+						}),
+					);
 
 					setNudgeSchedules(normalizedSchedules);
 				}
@@ -95,7 +94,7 @@ export const AttentionInterrupter = () => {
 			enabled: true,
 			startTime: "13:00",
 			endTime: "17:00",
-			nudgeInterval: "10",
+			nudgeInterval: 10,
 			sound: "soft-chime",
 		};
 

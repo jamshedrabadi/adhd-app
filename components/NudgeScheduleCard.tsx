@@ -22,7 +22,7 @@ import Animated, {
 import { NudgeSchedule } from "../types/NudgeSchedule";
 import { useTheme } from "../theme/ThemeProvider";
 import { TimeField } from "./TimeField";
-import { IntervalSelector } from "./IntervalSelector";
+import { IntervalInput } from "./IntervalInput";
 import { SoundSelector } from "./SoundSelector";
 import { validateSchedule } from "../utils/validateSchedule";
 import { generateTriggers } from "../utils/generateTriggers";
@@ -319,7 +319,7 @@ export const NudgeScheduleCard = ({
 					/>
 
 					{/* INTERVAL */}
-					<IntervalSelector
+					<IntervalInput
 						value={schedule.nudgeInterval}
 						disabled={!schedule.enabled}
 						onChange={(value) =>

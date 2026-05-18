@@ -26,8 +26,7 @@ export const getScheduleDurationMinutes = (
 export const minutesToTimeString = (
 	totalMinutes: number,
 ) => {
-	const normalized =
-		totalMinutes % (24 * 60);
+	const normalized = totalMinutes % (24 * 60);
 
 	const hours = Math.floor(
 		normalized / 60,

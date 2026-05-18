@@ -44,8 +44,7 @@ export const Index = () => {
 					)
 				}
 				style={{
-					backgroundColor:
-						colors.surface,
+					backgroundColor: colors.surface,
 					borderRadius: 16,
 					borderWidth: 1,
 					borderColor: colors.border,
@@ -54,8 +53,7 @@ export const Index = () => {
 			>
 				<Text
 					style={{
-						color:
-							colors.textPrimary,
+						color: colors.textPrimary,
 						fontSize: 18,
 						fontWeight: "600",
 					}}
@@ -65,8 +63,7 @@ export const Index = () => {
 
 				<Text
 					style={{
-						color:
-							colors.textSecondary,
+						color: colors.textSecondary,
 						marginTop: 6,
 					}}
 				>

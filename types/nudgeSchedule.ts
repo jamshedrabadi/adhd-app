@@ -4,6 +4,6 @@ export type NudgeSchedule = {
 	enabled: boolean;
 	startTime: string;
 	endTime: string;
-	nudgeInterval: string;
+	nudgeInterval: number;
 	sound: string;
 };

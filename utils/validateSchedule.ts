@@ -10,9 +10,7 @@ export const validateSchedule = (
 			schedule.endTime,
 		);
 
-	const interval = Number(
-		schedule.nudgeInterval,
-	);
+	const interval = schedule.nudgeInterval;
 
 	if (interval > duration) {
 		return {

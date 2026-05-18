@@ -55,10 +55,9 @@ export const SoundSelector = ({
 								borderColor: selected
 									? colors.accent
 									: colors.border,
-								backgroundColor:
-									selected
-										? colors.accentMuted
-										: colors.surfaceAlt,
+								backgroundColor: selected
+									? colors.accentMuted
+									: colors.surfaceAlt,
 								opacity: disabled
 									? 0.5
 									: 1,
@@ -66,8 +65,7 @@ export const SoundSelector = ({
 						>
 							<Text
 								style={{
-									color:
-										colors.textPrimary,
+									color: colors.textPrimary,
 									fontWeight: "600",
 								}}
 							>

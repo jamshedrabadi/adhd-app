@@ -20,9 +20,7 @@ export const generateTriggers = (
 			schedule.endTime,
 		);
 
-	const interval = Number(
-		schedule.nudgeInterval,
-	);
+	const interval =  schedule.nudgeInterval;
 
 	const end = start + duration;
 
