@@ -29,14 +29,12 @@ import { generateTriggers } from "../utils/generateTriggers";
 
 type Props = {
 	schedule: NudgeSchedule;
-	index: number;
 	onUpdate: (updated: NudgeSchedule) => void;
 	onDelete: (id: string) => void;
 };
 
 export const NudgeScheduleCard = ({
 	schedule,
-	index,
 	onUpdate,
 	onDelete,
 }: Props) => {
@@ -190,16 +188,14 @@ export const NudgeScheduleCard = ({
 					/>
 
 					<TextInput
-						value={
-							schedule.name || `Schedule ${index + 1}`
-						}
+						value={schedule.name}
 						onChangeText={(text) =>
 							onUpdate({
 								...schedule,
 								name: text,
 							})
 						}
-						placeholder={`Schedule ${index + 1}`}
+						placeholder="New Schedule"
 						placeholderTextColor={
 							colors.textSecondary
 						}

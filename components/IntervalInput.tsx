@@ -5,6 +5,11 @@ import {
 	Pressable,
 } from "react-native";
 
+import {
+	useEffect,
+	useState,
+} from "react";
+
 import { Ionicons } from "@expo/vector-icons";
 
 import { useTheme } from "../theme/ThemeProvider";
@@ -24,6 +29,14 @@ export const IntervalInput = ({
 	onChange,
 }: Props) => {
 	const { colors } = useTheme();
+
+	const [text, setText] = useState(
+		value.toString(),
+	);
+
+	useEffect(() => {
+		setText(value.toString());
+	}, [value]);
 
 	const decrement = () => {
 		if (disabled) {
@@ -96,13 +109,21 @@ export const IntervalInput = ({
 				</Pressable>
 
 				<TextInput
-					value={value.toString()}
-					onChangeText={(text) => {
-						const parsed = Number(text);
-
-						if (Number.isNaN(parsed)) {
+					value={text}
+					onChangeText={(newText) => {
+						if (
+							!/^\d*$/.test(newText)
+						) {
 							return;
 						}
+
+						setText(newText);
+
+						if (newText === "") {
+							return;
+						}
+
+						const parsed = Number(newText);
 
 						onChange(
 							Math.min(
@@ -113,6 +134,13 @@ export const IntervalInput = ({
 								),
 							),
 						);
+					}}
+					onBlur={() => {
+						if (text === "") {
+							setText(
+								value.toString(),
+							);
+						}
 					}}
 					editable={!disabled}
 					keyboardType="numeric"

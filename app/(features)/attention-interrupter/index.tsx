@@ -41,7 +41,7 @@ export const AttentionInterrupter = () => {
 							id:
 								schedule.id ?? Date.now().toString(),
 							name:
-								schedule.name ?? `Schedule ${index + 1}`,
+								schedule.name ?? "New Schedule",
 							enabled:
 								schedule.enabled ?? true,
 							startTime:
@@ -90,7 +90,7 @@ export const AttentionInterrupter = () => {
 	const addSchedule = () => {
 		const newSchedule: NudgeSchedule = {
 			id: Date.now().toString(),
-			name: `Schedule ${nudgeSchedules.length + 1}`,
+			name: "New Schedule",
 			enabled: true,
 			startTime: "13:00",
 			endTime: "17:00",
@@ -173,7 +173,6 @@ export const AttentionInterrupter = () => {
 					}) => (
 						<NudgeScheduleCard
 							schedule={item}
-							index={index}
 							onUpdate={updateSchedule}
 							onDelete={deleteSchedule}
 						/>
