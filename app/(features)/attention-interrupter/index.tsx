@@ -36,7 +36,6 @@ export const AttentionInterrupter = () => {
 					const normalizedSchedules: NudgeSchedule[] = parsedSchedules.map(
 						(
 							schedule: Partial<NudgeSchedule>,
-							index: number,
 						) => ({
 							id:
 								schedule.id ?? Date.now().toString(),
@@ -169,7 +168,6 @@ export const AttentionInterrupter = () => {
 					)}
 					renderItem={({
 						item,
-						index,
 					}) => (
 						<NudgeScheduleCard
 							schedule={item}
