@@ -7,7 +7,11 @@ import {
 	Alert,
 } from "react-native";
 
-import { useEffect, useState } from "react";
+import {
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -42,6 +46,7 @@ export const NudgeScheduleCard = ({
 
 	const [collapsed, setCollapsed] = useState(!schedule.enabled);
 	const [contentHeight, setContentHeight] = useState(0);
+	const [draftSchedule, setDraftSchedule] = useState(schedule);
 
 	const progress = useSharedValue(
 		schedule.enabled ? 1 : 0,
@@ -56,6 +61,10 @@ export const NudgeScheduleCard = ({
 				easing: Easing.out(Easing.ease),
 			});
 	}, [collapsed, progress]);
+
+	useEffect(() => {
+		setDraftSchedule(schedule);
+	}, [schedule]);
 
 	const toggleCollapse = () => {
 		setCollapsed((prev) => !prev);
@@ -86,14 +95,20 @@ export const NudgeScheduleCard = ({
 		};
 	});
 
-	const validation = validateSchedule(schedule);
+	const validation = validateSchedule(draftSchedule);
 
-	const triggers = generateTriggers(schedule);
+	const triggers = generateTriggers(draftSchedule);
+
+	const isDirty = useMemo(() => {
+		return (
+			JSON.stringify(draftSchedule) !== JSON.stringify(schedule)
+		);
+	}, [draftSchedule, schedule]);
 
 	const handleDelete = () => {
 		Alert.alert(
 			"Delete Schedule",
-			`Are you sure you want to delete "${schedule.name}"?`,
+			`Are you sure you want to delete "${draftSchedule.name}"?`,
 			[
 				{
 					text: "Cancel",
@@ -110,6 +125,14 @@ export const NudgeScheduleCard = ({
 		);
 	};
 
+	const handleSave = () => {
+		onUpdate(draftSchedule);
+	};
+
+	const handleCancel = () => {
+		setDraftSchedule(schedule);
+	};
+
 	const handleEnabledToggle = (value: boolean) => {
 		if (!value) {
 			Alert.alert(
@@ -124,8 +147,8 @@ export const NudgeScheduleCard = ({
 						text: "Disable",
 						style: "destructive",
 						onPress: () => {
-							onUpdate({
-								...schedule,
+							setDraftSchedule({
+								...draftSchedule,
 								enabled: false,
 							});
 						},
@@ -136,8 +159,8 @@ export const NudgeScheduleCard = ({
 			return;
 		}
 
-		onUpdate({
-			...schedule,
+		setDraftSchedule({
+			...draftSchedule,
 			enabled: true,
 		});
 	};
@@ -151,7 +174,7 @@ export const NudgeScheduleCard = ({
 				borderColor: validation.valid
 					? colors.border
 					: colors.warning,
-				opacity: schedule.enabled ? 1 : 0.5, // dim when disabled
+				opacity: draftSchedule.enabled ? 1 : 0.5, // dim when disabled
 				overflow: "hidden",
 			}}
 		>
@@ -174,7 +197,7 @@ export const NudgeScheduleCard = ({
 					}}
 				>
 					<Switch
-						value={schedule.enabled}
+						value={draftSchedule.enabled}
 						onValueChange={handleEnabledToggle}
 						trackColor={{
 							false: colors.surfaceAlt,
@@ -188,10 +211,10 @@ export const NudgeScheduleCard = ({
 					/>
 
 					<TextInput
-						value={schedule.name}
+						value={draftSchedule.name}
 						onChangeText={(text) =>
-							onUpdate({
-								...schedule,
+							setDraftSchedule({
+								...draftSchedule,
 								name: text,
 							})
 						}
@@ -291,11 +314,11 @@ export const NudgeScheduleCard = ({
 					{/* START TIME */}
 					<TimeField
 						label="Start Time"
-						value={schedule.startTime}
-						disabled={!schedule.enabled}
+						value={draftSchedule.startTime}
+						disabled={!draftSchedule.enabled}
 						onChange={(time) =>
-							onUpdate({
-								...schedule,
+							setDraftSchedule({
+								...draftSchedule,
 								startTime: time,
 							})
 						}
@@ -304,11 +327,11 @@ export const NudgeScheduleCard = ({
 					{/* END TIME */}
 					<TimeField
 						label="End Time"
-						value={schedule.endTime}
-						disabled={!schedule.enabled}
+						value={draftSchedule.endTime}
+						disabled={!draftSchedule.enabled}
 						onChange={(time) =>
-							onUpdate({
-								...schedule,
+							setDraftSchedule({
+								...draftSchedule,
 								endTime: time,
 							})
 						}
@@ -316,11 +339,11 @@ export const NudgeScheduleCard = ({
 
 					{/* INTERVAL */}
 					<IntervalInput
-						value={schedule.nudgeInterval}
-						disabled={!schedule.enabled}
+						value={draftSchedule.nudgeInterval}
+						disabled={!draftSchedule.enabled}
 						onChange={(value) =>
-							onUpdate({
-								...schedule,
+							setDraftSchedule({
+								...draftSchedule,
 								nudgeInterval: value,
 							})
 						}
@@ -328,15 +351,72 @@ export const NudgeScheduleCard = ({
 
 					{/* SOUND */}
 					<SoundSelector
-						value={schedule.sound}
-						disabled={!schedule.enabled}
+						value={draftSchedule.sound}
+						disabled={!draftSchedule.enabled}
 						onChange={(value) =>
-							onUpdate({
-								...schedule,
+							setDraftSchedule({
+								...draftSchedule,
 								sound: value,
 							})
 						}
 					/>
+
+					{isDirty && (
+						<View
+							style={{
+								flexDirection: "row",
+								gap: 12,
+								marginTop: 20,
+							}}
+						>
+							<Pressable
+								onPress={handleCancel}
+								style={{
+									flex: 1,
+									paddingVertical: 14,
+									borderRadius: 12,
+									borderWidth: 1,
+									borderColor: colors.border,
+									justifyContent: "center",
+									alignItems: "center",
+								}}
+							>
+								<Text
+									style={{
+										color: colors.textPrimary,
+										fontWeight: "600",
+									}}
+								>
+									Cancel
+								</Text>
+							</Pressable>
+
+							<Pressable
+								onPress={handleSave}
+								disabled={!validation.valid}
+								style={{
+									flex: 1,
+									paddingVertical: 14,
+									borderRadius: 12,
+									backgroundColor: validation.valid
+										? colors.accent
+										: colors.surfaceAlt,
+									justifyContent: "center",
+									alignItems: "center",
+									opacity: validation.valid ? 1 : 0.5,
+								}}
+							>
+								<Text
+									style={{
+										color: "white",
+										fontWeight: "700",
+									}}
+								>
+									Save Changes
+								</Text>
+							</Pressable>
+						</View>
+					)}
 
 					{/* GENERATED NUDGES */}
 					<View
