@@ -20,51 +20,68 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Ionicons } from "@expo/vector-icons";
 
-import { ScheduleEditor } from "../../../../components/ScheduleEditor";
+import { ScheduleEditor } from "../../../components/ScheduleEditor";
 
-import { NudgeSchedule } from "../../../../types/NudgeSchedule";
+import { NudgeSchedule } from "../../../types/NudgeSchedule";
 
-import { useTheme } from "../../../../theme/ThemeProvider";
+import { useTheme } from "../../../theme/ThemeProvider";
 
 const STORAGE_KEY = "NUDGE_SCHEDULES";
 
-export const EditScheduleScreen = () => {
+export const ScheduleEditorScreen = () => {
 	const router = useRouter();
 
 	const { scheduleId } =
-		useLocalSearchParams<{ scheduleId: string }>();
+		useLocalSearchParams<{
+			scheduleId?: string;
+		}>();
+
+	const isEditing = !!scheduleId;
 
 	const { colors } = useTheme();
 
 	const [schedule, setSchedule] =
-		useState<NudgeSchedule | null>(
-			null,
-		);
+		useState<NudgeSchedule>({
+			id: Date.now().toString(),
+			name: "",
+			enabled: true,
+			startTime: "09:00",
+			endTime: "17:00",
+			nudgeInterval: 10,
+			sound: "soft-chime",
+		});
+
+	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
 		const loadSchedule = async () => {
+			if (!scheduleId) {
+				setLoaded(true);
+				return;
+			}
+
 			try {
-				const data =
-					await AsyncStorage.getItem(STORAGE_KEY);
+				const data = await AsyncStorage.getItem(STORAGE_KEY);
 
 				if (!data) {
+					setLoaded(true);
 					return;
 				}
 
 				const schedules: NudgeSchedule[] = JSON.parse(data);
 
 				const foundSchedule = schedules.find(
-					(schedule) =>
-						schedule.id === scheduleId,
+					(item) =>
+						item.id === scheduleId,
 				);
 
-				if (!foundSchedule) {
-					return;
+				if (foundSchedule) {
+					setSchedule(foundSchedule);
 				}
-
-				setSchedule(foundSchedule);
 			} catch (error) {
 				console.error("Failed to load schedule", error);
+			} finally {
+				setLoaded(true);
 			}
 		};
 
@@ -72,11 +89,9 @@ export const EditScheduleScreen = () => {
 	}, [scheduleId]);
 
 	const isValid = useMemo(() => {
-		if (!schedule) {
-			return false;
-		}
-
-		return schedule.name.trim().length > 0;
+		return (
+			schedule.name.trim().length > 0
+		);
 	}, [schedule]);
 
 	const handleCancel = () => {
@@ -84,30 +99,35 @@ export const EditScheduleScreen = () => {
 	};
 
 	const handleSave = async () => {
-		if (!schedule) {
-			return;
-		}
-
 		if (!schedule.name.trim()) {
 			Alert.alert("Missing Schedule Name", "Please enter a schedule name.");
+
 			return;
 		}
 
 		try {
-			const data =
-				await AsyncStorage.getItem(STORAGE_KEY);
+			const data = await AsyncStorage.getItem(STORAGE_KEY);
 
-			if (!data) {
-				return;
+			const schedules: NudgeSchedule[] =
+				data
+					? JSON.parse(data)
+					: [];
+
+			let updatedSchedules: | NudgeSchedule[];
+
+			if (isEditing) {
+				updatedSchedules = schedules.map(
+					(item) =>
+						item.id === schedule.id
+							? schedule
+							: item,
+				);
+			} else {
+				updatedSchedules = [
+					...schedules,
+					schedule,
+				];
 			}
-
-			const schedules: NudgeSchedule[] = JSON.parse(data);
-
-			const updatedSchedules = schedules.map((item) =>
-				item.id === schedule.id
-					? schedule
-					: item,
-			);
 
 			await AsyncStorage.setItem(
 				STORAGE_KEY,
@@ -123,7 +143,7 @@ export const EditScheduleScreen = () => {
 	};
 
 	const handleDelete = () => {
-		if (!schedule) {
+		if (!isEditing) {
 			return;
 		}
 
@@ -140,8 +160,7 @@ export const EditScheduleScreen = () => {
 					style: "destructive",
 					onPress: async () => {
 						try {
-							const data =
-								await AsyncStorage.getItem(STORAGE_KEY);
+							const data = await AsyncStorage.getItem(STORAGE_KEY);
 
 							if (!data) {
 								return;
@@ -151,8 +170,7 @@ export const EditScheduleScreen = () => {
 
 							const filtered = schedules.filter(
 								(item) =>
-									item.id !==
-									schedule.id,
+									item.id !== schedule.id,
 							);
 
 							await AsyncStorage.setItem(
@@ -170,7 +188,7 @@ export const EditScheduleScreen = () => {
 		);
 	};
 
-	if (!schedule) {
+	if (!loaded) {
 		return (
 			<View
 				style={{
@@ -201,6 +219,10 @@ export const EditScheduleScreen = () => {
 			>
 				<Pressable
 					onPress={handleCancel}
+					hitSlop={8}
+					style={{
+						paddingVertical: 8,
+					}}
 				>
 					<Text
 						style={{
@@ -213,6 +235,18 @@ export const EditScheduleScreen = () => {
 					</Text>
 				</Pressable>
 
+				<Text
+					style={{
+						color: colors.textPrimary,
+						fontSize: 18,
+						fontWeight: "700",
+					}}
+				>
+					{isEditing
+						? "Edit Schedule"
+						: "New Schedule"}
+				</Text>
+
 				<View
 					style={{
 						flexDirection: "row",
@@ -220,21 +254,31 @@ export const EditScheduleScreen = () => {
 						gap: 18,
 					}}
 				>
-					<Pressable
-						onPress={handleDelete}
-					>
-						<Ionicons
-							name="trash-outline"
-							size={22}
-							color={
-								colors.warning
-							}
-						/>
-					</Pressable>
+					{isEditing && (
+						<Pressable
+							onPress={handleDelete}
+							hitSlop={8}
+							style={{
+								paddingVertical: 8,
+							}}
+						>
+							<Ionicons
+								name="trash-outline"
+								size={22}
+								color={
+									colors.warning
+								}
+							/>
+						</Pressable>
+					)}
 
 					<Pressable
 						onPress={handleSave}
+						hitSlop={8}
 						disabled={!isValid}
+						style={{
+							paddingVertical: 8,
+						}}
 					>
 						<Text
 							style={{
@@ -266,4 +310,4 @@ export const EditScheduleScreen = () => {
 	);
 };
 
-export default EditScheduleScreen;
+export default ScheduleEditorScreen;

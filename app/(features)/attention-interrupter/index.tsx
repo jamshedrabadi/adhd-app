@@ -138,7 +138,7 @@ export const AttentionInterrupter = () => {
 							title="Add Nudge Schedule"
 							onPress={() =>
 								router.push(
-									"/(features)/attention-interrupter/new",
+									"/(features)/attention-interrupter/schedule-editor",
 								)
 							}
 						/>
@@ -241,7 +241,7 @@ export const AttentionInterrupter = () => {
 							onPress={() =>
 								router.push({
 									pathname:
-										"/(features)/attention-interrupter/edit/[scheduleId]",
+										"/(features)/attention-interrupter/schedule-editor",
 									params: {
 										scheduleId: item.id,
 									},

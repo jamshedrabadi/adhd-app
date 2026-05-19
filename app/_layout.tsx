@@ -74,12 +74,7 @@ const RootLayoutContent = () => {
 				/>
 
 				<Stack.Screen
-					name="(features)/attention-interrupter/new"
-					options={{ title: "Schedule" }}
-				/>
-
-				<Stack.Screen
-					name="(features)/attention-interrupter/edit/[scheduleId]"
+					name="(features)/attention-interrupter/schedule-editor"
 					options={{ title: "Schedule" }}
 				/>
 			</Stack>
