@@ -4,9 +4,17 @@ import {
 	FlatList,
 	KeyboardAvoidingView,
 	Platform,
+	Alert,
 } from "react-native";
 
-import { useEffect, useRef, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+
+import { useRouter, useFocusEffect } from "expo-router";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import debounce from "lodash.debounce";
@@ -19,51 +27,66 @@ import { sendTestNotification } from "../../../utils/notifications";
 const STORAGE_KEY = "NUDGE_SCHEDULES";
 
 export const AttentionInterrupter = () => {
+	const router = useRouter();
+
 	const { colors } = useTheme();
 
-	const [nudgeSchedules, setNudgeSchedules] = useState<
-		NudgeSchedule[]
-	>([]);
+	const [nudgeSchedules, setNudgeSchedules] =
+		useState<NudgeSchedule[]>([]);
 
 	// Load schedules
-	useEffect(() => {
-		const loadNudgeSchedules = async () => {
-			try {
-				const data = await AsyncStorage.getItem(STORAGE_KEY);
+	const loadNudgeSchedules = useCallback(async () => {
+		try {
+			const data = await AsyncStorage.getItem(STORAGE_KEY);
 
-				if (data) {
-					const parsedSchedules = JSON.parse(data);
-
-					const normalizedSchedules: NudgeSchedule[] = parsedSchedules.map(
-						(
-							schedule: Partial<NudgeSchedule>,
-						) => ({
-							id:
-								schedule.id ?? Date.now().toString(),
-							name:
-								schedule.name ?? "New Schedule",
-							enabled:
-								schedule.enabled ?? true,
-							startTime:
-								schedule.startTime ?? "13:00",
-							endTime:
-								schedule.endTime ?? "17:00",
-							nudgeInterval:
-								schedule.nudgeInterval ?? 10,
-							sound:
-								schedule.sound ?? "soft-chime",
-						}),
-					);
-
-					setNudgeSchedules(normalizedSchedules);
-				}
-			} catch (error) {
-				console.error("Error loading schedules", error);
+			if (!data) {
+				setNudgeSchedules([]);
+				return;
 			}
-		};
 
-		loadNudgeSchedules();
+			const parsedSchedules = JSON.parse(data);
+
+			const normalizedSchedules: NudgeSchedule[] = parsedSchedules.map(
+				(
+					schedule: Partial<NudgeSchedule>,
+				) => ({
+					id:
+						schedule.id ??
+						Date.now().toString(),
+					name:
+						schedule.name ??
+						"New Schedule",
+					enabled:
+						schedule.enabled ?? true,
+					startTime:
+						schedule.startTime ??
+						"13:00",
+					endTime:
+						schedule.endTime ??
+						"17:00",
+					nudgeInterval:
+						schedule.nudgeInterval ??
+						10,
+					sound:
+						schedule.sound ??
+						"soft-chime",
+				}),
+			);
+
+			setNudgeSchedules(normalizedSchedules);
+		} catch (error) {
+			console.error(
+				"Error loading schedules",
+				error,
+			);
+		}
 	}, []);
+
+	useFocusEffect(
+		useCallback(() => {
+			loadNudgeSchedules();
+		}, [loadNudgeSchedules]),
+	);
 
 	// Debounced save
 	const debouncedSave = useRef(
@@ -86,41 +109,6 @@ export const AttentionInterrupter = () => {
 			debouncedSave.cancel();
 		};
 	}, [nudgeSchedules, debouncedSave]);
-
-	const addSchedule = () => {
-		const newSchedule: NudgeSchedule = {
-			id: Date.now().toString(),
-			name: "New Schedule",
-			enabled: true,
-			startTime: "13:00",
-			endTime: "17:00",
-			nudgeInterval: 10,
-			sound: "soft-chime",
-		};
-
-		setNudgeSchedules((prev) => [
-			...prev,
-			newSchedule,
-		]);
-	};
-
-	const updateSchedule = (
-		updated: NudgeSchedule,
-	) => {
-		setNudgeSchedules((prev) =>
-			prev.map((schedule) =>
-				schedule.id === updated.id
-					? updated
-					: schedule,
-			),
-		);
-	};
-
-	const deleteSchedule = (id: string) => {
-		setNudgeSchedules((prev) =>
-			prev.filter((schedule) => schedule.id !== id),
-		);
-	};
 
 	return (
 		<KeyboardAvoidingView
@@ -148,7 +136,11 @@ export const AttentionInterrupter = () => {
 					<View style={{ flex: 1 }}>
 						<Button
 							title="Add Nudge Schedule"
-							onPress={addSchedule}
+							onPress={() =>
+								router.push(
+									"/(features)/attention-interrupter/new",
+								)
+							}
 						/>
 					</View>
 
@@ -189,8 +181,72 @@ export const AttentionInterrupter = () => {
 					}) => (
 						<NudgeScheduleCard
 							schedule={item}
-							onUpdate={updateSchedule}
-							onDelete={deleteSchedule}
+							onToggleEnabled={async () => {
+								const targetSchedule =
+									nudgeSchedules.find((schedule) =>
+										schedule.id === item.id,
+									);
+
+								if (!targetSchedule) {
+									return;
+								}
+
+								const nextEnabledState = !targetSchedule.enabled;
+
+								const performToggle = async () => {
+									try {
+										const updatedSchedules = nudgeSchedules.map(
+											(schedule) =>
+												schedule.id === item.id
+													? {
+														...schedule,
+														enabled: nextEnabledState,
+													}
+													: schedule,
+										);
+
+										setNudgeSchedules(updatedSchedules);
+
+										await AsyncStorage.setItem(
+											STORAGE_KEY,
+											JSON.stringify(updatedSchedules),
+										);
+									} catch (error) {
+										console.error("Failed to toggle schedule", error);
+									}
+								};
+
+								if (!nextEnabledState) {
+									Alert.alert(
+										"Disable Schedule",
+										`Disable "${targetSchedule.name}"?`,
+										[
+											{
+												text: "Cancel",
+												style: "cancel",
+											},
+											{
+												text: "Disable",
+												style: "destructive",
+												onPress: performToggle,
+											},
+										],
+									);
+
+									return;
+								}
+
+								await performToggle();
+							}}
+							onPress={() =>
+								router.push({
+									pathname:
+										"/(features)/attention-interrupter/edit/[scheduleId]",
+									params: {
+										scheduleId: item.id,
+									},
+								})
+							}
 						/>
 					)}
 				/>
