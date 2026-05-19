@@ -33,6 +33,8 @@ export const SoundSelector = ({
 
 			<View
 				style={{
+					flexDirection: "row",
+					flexWrap: "wrap",
 					gap: 8,
 				}}
 			>
@@ -48,8 +50,8 @@ export const SoundSelector = ({
 								onChange(sound.id)
 							}
 							style={{
-								paddingHorizontal: 14,
-								paddingVertical: 14,
+								paddingHorizontal: 12,
+								paddingVertical: 10,
 								borderRadius: 12,
 								borderWidth: 1,
 								borderColor: selected

@@ -97,6 +97,8 @@ export const NudgeScheduleCard = ({
 
 	const validation = validateSchedule(draftSchedule);
 
+	const summaryText = `${draftSchedule.startTime} → ${draftSchedule.endTime} • every ${draftSchedule.nudgeInterval}m`;
+
 	const triggers = generateTriggers(draftSchedule);
 
 	const isDirty = useMemo(() => {
@@ -147,10 +149,13 @@ export const NudgeScheduleCard = ({
 						text: "Disable",
 						style: "destructive",
 						onPress: () => {
-							setDraftSchedule({
+							const updated = {
 								...draftSchedule,
 								enabled: false,
-							});
+							};
+
+							setDraftSchedule(updated);
+							onUpdate(updated);
 						},
 					},
 				],
@@ -159,10 +164,13 @@ export const NudgeScheduleCard = ({
 			return;
 		}
 
-		setDraftSchedule({
+		const updated = {
 			...draftSchedule,
 			enabled: true,
-		});
+		};
+
+		setDraftSchedule(updated);
+		onUpdate(updated);
 	};
 
 	return (
@@ -192,7 +200,6 @@ export const NudgeScheduleCard = ({
 					style={{
 						flexDirection: "row",
 						alignItems: "center",
-						gap: 12,
 						flex: 1,
 					}}
 				>
@@ -210,26 +217,46 @@ export const NudgeScheduleCard = ({
 						}
 					/>
 
-					<TextInput
-						value={draftSchedule.name}
-						onChangeText={(text) =>
-							setDraftSchedule({
-								...draftSchedule,
-								name: text,
-							})
-						}
-						placeholder="New Schedule"
-						placeholderTextColor={
-							colors.textSecondary
-						}
+					<View
 						style={{
-							color: colors.textPrimary,
-							fontSize: 16,
-							fontWeight: "600",
 							flex: 1,
-							paddingVertical: 0,
+							marginLeft: 12,
 						}}
-					/>
+					>
+						<TextInput
+							value={draftSchedule.name}
+							onChangeText={(text) =>
+								setDraftSchedule({
+									...draftSchedule,
+									name: text,
+								})
+							}
+							placeholder="New Schedule"
+							placeholderTextColor={
+								colors.textSecondary
+							}
+							style={{
+								color: colors.textPrimary,
+								fontSize: 16,
+								fontWeight: "600",
+								flex: 1,
+								paddingVertical: 0,
+							}}
+						/>
+
+						{collapsed && (
+							<Text
+								numberOfLines={1}
+								style={{
+									color: colors.textSecondary,
+									fontSize: 13,
+									marginTop: 2,
+								}}
+							>
+								{summaryText}
+							</Text>
+						)}
+					</View>
 				</View>
 
 				{/* RIGHT ACTIONS */}
@@ -311,31 +338,41 @@ export const NudgeScheduleCard = ({
 						paddingBottom: 16,
 					}}
 				>
-					{/* START TIME */}
-					<TimeField
-						label="Start Time"
-						value={draftSchedule.startTime}
-						disabled={!draftSchedule.enabled}
-						onChange={(time) =>
-							setDraftSchedule({
-								...draftSchedule,
-								startTime: time,
-							})
-						}
-					/>
+					{/* START TIME + END TIME */}
+					<View
+						style={{
+							flexDirection: "row",
+							gap: 12,
+						}}
+					>
+						<View style={{ flex: 1 }}>
+							<TimeField
+								label="Start"
+								value={draftSchedule.startTime}
+								disabled={!draftSchedule.enabled}
+								onChange={(time) =>
+									setDraftSchedule({
+										...draftSchedule,
+										startTime: time,
+									})
+								}
+							/>
+						</View>
 
-					{/* END TIME */}
-					<TimeField
-						label="End Time"
-						value={draftSchedule.endTime}
-						disabled={!draftSchedule.enabled}
-						onChange={(time) =>
-							setDraftSchedule({
-								...draftSchedule,
-								endTime: time,
-							})
-						}
-					/>
+						<View style={{ flex: 1 }}>
+							<TimeField
+								label="End"
+								value={draftSchedule.endTime}
+								disabled={!draftSchedule.enabled}
+								onChange={(time) =>
+									setDraftSchedule({
+										...draftSchedule,
+										endTime: time,
+									})
+								}
+							/>
+						</View>
+					</View>
 
 					{/* INTERVAL */}
 					<IntervalInput
@@ -417,32 +454,71 @@ export const NudgeScheduleCard = ({
 							</Pressable>
 						</View>
 					)}
-
-					{/* GENERATED NUDGES */}
+					{/* SCHEDULE SUMMARY */}
 					<View
 						style={{
+							flexDirection: "row",
+							flexWrap: "wrap",
+							gap: 8,
 							marginTop: 20,
 						}}
 					>
-						<Text
+						<View
 							style={{
-								color: colors.textSecondary,
-								fontSize: 13,
-								marginBottom: 6,
+								backgroundColor: colors.surfaceAlt,
+								borderRadius: 999,
+								paddingHorizontal: 12,
+								paddingVertical: 8,
 							}}
 						>
-							Generated Nudges
-						</Text>
+							<Text
+								style={{
+									color: colors.textPrimary,
+									fontSize: 13,
+									fontWeight: "600",
+								}}
+							>
+								{triggers.length} nudges
+							</Text>
+						</View>
 
-						<Text
+						<View
 							style={{
-								color: colors.textPrimary,
-								fontSize: 14,
-								lineHeight: 22,
+								backgroundColor: colors.surfaceAlt,
+								borderRadius: 999,
+								paddingHorizontal: 12,
+								paddingVertical: 8,
 							}}
 						>
-							{triggers.join(", ")}
-						</Text>
+							<Text
+								style={{
+									color: colors.textPrimary,
+									fontSize: 13,
+									fontWeight: "600",
+								}}
+							>
+								Every {draftSchedule.nudgeInterval} min
+							</Text>
+						</View>
+
+						<View
+							style={{
+								backgroundColor: colors.surfaceAlt,
+								borderRadius: 999,
+								paddingHorizontal: 12,
+								paddingVertical: 8,
+							}}
+						>
+							<Text
+								style={{
+									color: colors.textPrimary,
+									fontSize: 13,
+									fontWeight: "600",
+								}}
+							>
+								{draftSchedule.startTime} → {draftSchedule.endTime}
+							</Text>
+						</View>
 					</View>
 				</View>
 			</Animated.View>

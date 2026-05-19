@@ -38,28 +38,14 @@ export const IntervalInput = ({
 		setText(value.toString());
 	}, [value]);
 
-	const decrement = () => {
-		if (disabled) {
-			return;
-		}
-
-		onChange(
-			Math.max(
-				MIN_INTERVAL,
-				value - 1,
-			),
-		);
-	};
-
-	const increment = () => {
-		if (disabled) {
-			return;
-		}
-
+	const updateValue = (newValue: number) => {
 		onChange(
 			Math.min(
 				MAX_INTERVAL,
-				value + 1,
+				Math.max(
+					MIN_INTERVAL,
+					newValue,
+				),
 			),
 		);
 	};
@@ -67,44 +53,51 @@ export const IntervalInput = ({
 	return (
 		<View
 			style={{
-				marginTop: 16,
+				marginTop: 18,
 			}}
 		>
 			<Text
 				style={{
 					color: colors.textSecondary,
-					marginBottom: 8,
+					fontSize: 13,
+					marginBottom: 10,
 				}}
 			>
-				Nudge Interval (minutes)
+				Repeat Every
 			</Text>
 
 			<View
 				style={{
 					flexDirection: "row",
 					alignItems: "center",
+					alignSelf: "flex-start",
 					backgroundColor: colors.surfaceAlt,
-					borderRadius: 12,
+					borderRadius: 14,
 					borderWidth: 1,
 					borderColor: colors.border,
-					overflow: "hidden",
+					paddingHorizontal: 10,
+					paddingVertical: 6,
+					gap: 8,
 				}}
 			>
 				<Pressable
-					onPress={decrement}
+					onPress={() =>
+						!disabled &&
+						updateValue(value - 1)
+					}
+					hitSlop={6}
 					style={{
-						width: 56,
-						height: 56,
+						width: 30,
+						height: 30,
 						justifyContent: "center",
 						alignItems: "center",
+						borderRadius: 8,
 					}}
 				>
 					<Ionicons
 						name="remove"
-						size={22}
-						color={
-							colors.textPrimary
-						}
+						size={18}
+						color={colors.textPrimary}
 					/>
 				</Pressable>
 
@@ -123,17 +116,7 @@ export const IntervalInput = ({
 							return;
 						}
 
-						const parsed = Number(newText);
-
-						onChange(
-							Math.min(
-								MAX_INTERVAL,
-								Math.max(
-									MIN_INTERVAL,
-									parsed,
-								),
-							),
-						);
+						updateValue(Number(newText));
 					}}
 					onBlur={() => {
 						if (text === "") {
@@ -146,29 +129,42 @@ export const IntervalInput = ({
 					keyboardType="numeric"
 					textAlign="center"
 					style={{
-						flex: 1,
-						height: 56,
+						minWidth: 42,
 						color: colors.textPrimary,
-						fontSize: 18,
-						fontWeight: "600",
+						fontSize: 16,
+						fontWeight: "700",
+						paddingVertical: 0,
 					}}
 				/>
 
-				<Pressable
-					onPress={increment}
+				<Text
 					style={{
-						width: 56,
-						height: 56,
+						color: colors.textSecondary,
+						fontSize: 14,
+						marginRight: 2,
+					}}
+				>
+					min
+				</Text>
+
+				<Pressable
+					onPress={() =>
+						!disabled &&
+						updateValue(value + 1)
+					}
+					hitSlop={6}
+					style={{
+						width: 30,
+						height: 30,
 						justifyContent: "center",
 						alignItems: "center",
+						borderRadius: 8,
 					}}
 				>
 					<Ionicons
 						name="add"
-						size={22}
-						color={
-							colors.textPrimary
-						}
+						size={18}
+						color={colors.textPrimary}
 					/>
 				</Pressable>
 			</View>
