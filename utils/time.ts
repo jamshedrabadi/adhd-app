@@ -40,3 +40,21 @@ export const minutesToTimeString = (
 			.toString()
 			.padStart(2, "0")}`;
 };
+
+export const formatTime = (
+	time: string,
+) => {
+	const [hours, minutes] = time
+		.split(":")
+		.map(Number);
+
+	const date = new Date();
+
+	date.setHours(hours);
+	date.setMinutes(minutes);
+
+	return date.toLocaleTimeString([], {
+		hour: "numeric",
+		minute: "2-digit",
+	});
+};

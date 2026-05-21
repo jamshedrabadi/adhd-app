@@ -7,6 +7,7 @@ import {
 
 import { NudgeSchedule } from "../types/NudgeSchedule";
 import { useTheme } from "../theme/ThemeProvider";
+import { formatTime } from "../utils/time";
 
 type Props = {
 	schedule: NudgeSchedule;
@@ -21,9 +22,20 @@ export const NudgeScheduleCard = ({
 }: Props) => {
 	const { colors } = useTheme();
 
-	const summaryText = `${schedule.startTime} → ${schedule.endTime}`;
+	const summaryText = `${formatTime(schedule.startTime)} - ${formatTime(schedule.endTime)}`;
 
-	const detailText = `Every ${schedule.nudgeInterval} min • ${schedule.sound}`;
+	const soundLabel = schedule.sound
+		.split("-")
+		.map(
+			(word) =>
+				word.charAt(0).toUpperCase() + word.slice(1),
+		)
+		.join(" ");
+
+	const detailText = `Every ${schedule.nudgeInterval} minute${schedule.nudgeInterval === 1
+		? ""
+		: "s"
+		} (${soundLabel})`;
 
 	return (
 		<Pressable
@@ -60,7 +72,7 @@ export const NudgeScheduleCard = ({
 						style={{
 							color: colors.textPrimary,
 							fontSize: 15,
-							marginTop: 8,
+							marginTop: 14,
 						}}
 					>
 						{summaryText}
@@ -70,7 +82,8 @@ export const NudgeScheduleCard = ({
 						style={{
 							color: colors.textSecondary,
 							fontSize: 13,
-							marginTop: 4,
+							marginTop: 10,
+							lineHeight: 18,
 						}}
 					>
 						{detailText}
@@ -89,22 +102,23 @@ export const NudgeScheduleCard = ({
 
 							onToggleEnabled();
 						}}
+						hitSlop={8}
 					>
-						<Switch
-							value={schedule.enabled}
-							onValueChange={() =>
-								onToggleEnabled()
-							}
-							trackColor={{
-								false: colors.surfaceAlt,
-								true: colors.accentMuted,
-							}}
-							thumbColor={
-								schedule.enabled
-									? colors.accent
-									: "#999"
-							}
-						/>
+						<View pointerEvents="none">
+							<Switch
+								value={schedule.enabled}
+								onValueChange={() => { }}
+								trackColor={{
+									false: colors.surfaceAlt,
+									true: colors.accentMuted,
+								}}
+								thumbColor={
+									schedule.enabled
+										? colors.accent
+										: "#999"
+								}
+							/>
+						</View>
 					</Pressable>
 				</View>
 			</View>

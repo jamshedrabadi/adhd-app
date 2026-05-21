@@ -209,37 +209,17 @@ export const ScheduleEditorScreen = () => {
 			{/* TOP BAR */}
 			<View
 				style={{
-					flexDirection: "row",
-					alignItems: "center",
-					justifyContent: "space-between",
 					paddingHorizontal: 24,
 					paddingTop: 20,
-					paddingBottom: 16,
+					paddingBottom: 20,
 				}}
 			>
-				<Pressable
-					onPress={handleCancel}
-					hitSlop={8}
-					style={{
-						paddingVertical: 8,
-					}}
-				>
-					<Text
-						style={{
-							color: colors.textSecondary,
-							fontSize: 16,
-							fontWeight: "600",
-						}}
-					>
-						Cancel
-					</Text>
-				</Pressable>
-
 				<Text
 					style={{
 						color: colors.textPrimary,
-						fontSize: 18,
+						fontSize: 24,
 						fontWeight: "700",
+						marginBottom: 20,
 					}}
 				>
 					{isEditing
@@ -250,48 +230,81 @@ export const ScheduleEditorScreen = () => {
 				<View
 					style={{
 						flexDirection: "row",
-						alignItems: "center",
-						gap: 18,
+						gap: 12,
 					}}
 				>
-					{isEditing && (
-						<Pressable
-							onPress={handleDelete}
-							hitSlop={8}
-							style={{
-								paddingVertical: 8,
-							}}
-						>
-							<Ionicons
-								name="trash-outline"
-								size={22}
-								color={
-									colors.warning
-								}
-							/>
-						</Pressable>
-					)}
-
 					<Pressable
-						onPress={handleSave}
-						hitSlop={8}
-						disabled={!isValid}
+						onPress={handleCancel}
 						style={{
-							paddingVertical: 8,
+							flex: 1,
+							height: 48,
+							borderRadius: 12,
+							borderWidth: 1,
+							borderColor: colors.border,
+							justifyContent: "center",
+							alignItems: "center",
+							backgroundColor: colors.surface,
 						}}
 					>
 						<Text
 							style={{
-								color: isValid
-									? colors.accent
-									: colors.textSecondary,
-								fontSize: 16,
+								color: colors.textPrimary,
+								fontSize: 15,
+								fontWeight: "600",
+							}}
+						>
+							Cancel
+						</Text>
+					</Pressable>
+
+					<Pressable
+						onPress={handleSave}
+						disabled={!isValid}
+						style={{
+							flex: 1,
+							height: 48,
+							borderRadius: 12,
+							backgroundColor: isValid
+								? colors.accent
+								: colors.surfaceAlt,
+							justifyContent: "center",
+							alignItems: "center",
+							opacity: isValid ? 1 : 0.5,
+						}}
+					>
+						<Text
+							style={{
+								color: "#FFFFFF",
+								fontSize: 15,
 								fontWeight: "700",
 							}}
 						>
 							Save
 						</Text>
 					</Pressable>
+
+					{isEditing && (
+						<Pressable
+							onPress={handleDelete}
+							style={{
+								width: 48,
+								height: 48,
+								borderRadius: 12,
+								borderWidth: 1,
+								borderColor: colors.warning,
+								justifyContent: "center",
+								alignItems: "center",
+							}}
+						>
+							<Ionicons
+								name="trash-outline"
+								size={20}
+								color={
+									colors.warning
+								}
+							/>
+						</Pressable>
+					)}
 				</View>
 			</View>
 
