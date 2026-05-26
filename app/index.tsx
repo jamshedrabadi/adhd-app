@@ -1,5 +1,12 @@
+import {
+	View,
+	Text,
+	Pressable,
+} from "react-native";
+
 import { useRouter } from "expo-router";
-import { Text, View, Pressable } from "react-native";
+
+import { Ionicons } from "@expo/vector-icons";
 
 import { useTheme } from "../theme/ThemeProvider";
 
@@ -12,77 +19,98 @@ export const Index = () => {
 		<View
 			style={{
 				flex: 1,
-				padding: 24,
 				backgroundColor: colors.background,
+				paddingHorizontal: 24,
+				paddingTop: 40,
 			}}
 		>
-			<Text
+			{/* HEADER */}
+			<View
 				style={{
-					fontSize: 32,
-					fontWeight: "700",
-					color: colors.textPrimary,
-					marginBottom: 8,
+					marginBottom: 28,
 				}}
 			>
-				Hello
-			</Text>
+				<Text
+					style={{
+						fontSize: 32,
+						fontWeight: "800",
+						color: colors.textPrimary,
+						letterSpacing: -1,
+					}}
+				>
+					Good evening
+				</Text>
 
-			<Text
-				style={{
-					fontSize: 16,
-					color: colors.textSecondary,
-					marginBottom: 32,
-				}}
-			>
-				Choose a feature
-			</Text>
+				<Text
+					style={{
+						marginTop: 8,
+						fontSize: 16,
+						lineHeight: 24,
+						color: colors.textSecondary,
+						maxWidth: "92%",
+					}}
+				>
+					External structure for attention regulation and hyperfocus interruption.
+				</Text>
+			</View>
 
+			{/* ATTENTION INTERRUPTER CARD */}
 			<Pressable
 				onPress={() =>
 					router.push(
 						"/(features)/attention-interrupter",
 					)
 				}
-				android_ripple={{
-					color: colors.border,
-					borderless: false,
-				}}
 				style={({ pressed }) => ({
 					backgroundColor: pressed
 						? colors.surfaceAlt
 						: colors.surface,
-					borderRadius: 16,
+					borderRadius: 24,
 					borderWidth: 1,
 					borderColor: colors.border,
-					padding: 20,
-					transform: [
-						{
-							scale: pressed
-								? 0.985
-								: 1,
-						},
-					],
+					padding: 22,
 				})}
 			>
+				{/* ICON */}
+				<View
+					style={{
+						width: 56,
+						height: 56,
+						borderRadius: 18,
+						backgroundColor: colors.accentMuted,
+						justifyContent: "center",
+						alignItems: "center",
+						marginBottom: 18,
+					}}
+				>
+					<Ionicons
+						name="pulse-outline"
+						size={28}
+						color={colors.accent}
+					/>
+				</View>
+
+				{/* TITLE */}
 				<Text
 					style={{
+						fontSize: 24,
+						fontWeight: "800",
 						color: colors.textPrimary,
-						fontSize: 18,
-						fontWeight: "600",
+						marginBottom: 10,
 					}}
 				>
 					Attention Interrupter
 				</Text>
 
+				{/* DESCRIPTION */}
 				<Text
 					style={{
+						fontSize: 15,
+						lineHeight: 24,
 						color: colors.textSecondary,
-						marginTop: 6,
 					}}
 				>
-					Periodic nudges to regain
-					time awareness while
-					focusing.
+					Scheduled nudges that break hyperfocus loops and restore time awareness throughout the day.
 				</Text>
 			</Pressable>
 		</View>
