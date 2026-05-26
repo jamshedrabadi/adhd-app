@@ -1,10 +1,11 @@
 import {
 	View,
-	Button,
+	Text,
 	FlatList,
 	KeyboardAvoidingView,
 	Platform,
 	Alert,
+	Pressable,
 } from "react-native";
 
 import {
@@ -130,32 +131,67 @@ export const AttentionInterrupter = () => {
 					style={{
 						flexDirection: "row",
 						gap: 12,
-						marginBottom: 12,
+						marginBottom: 20,
 					}}
 				>
-					<View style={{ flex: 1 }}>
-						<Button
-							title="Add Nudge Schedule"
-							onPress={() =>
-								router.push(
-									"/(features)/attention-interrupter/schedule-editor",
-								)
-							}
-						/>
-					</View>
-
-					<View style={{ flex: 1 }}>
-						<Button
-							title="Send Test Nudge"
-							onPress={async () => {
-								try {
-									await sendTestNotification();
-								} catch (error) {
-									console.error("Notification error", error);
-								}
+					<Pressable
+						onPress={() =>
+							router.push(
+								"/(features)/attention-interrupter/schedule-editor",
+							)
+						}
+						style={{
+							flex: 1,
+							height: 52,
+							borderRadius: 14,
+							backgroundColor: colors.accent,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Text
+							style={{
+								color: "#FFFFFF",
+								fontSize: 15,
+								fontWeight: "700",
 							}}
-						/>
-					</View>
+						>
+							New Schedule
+						</Text>
+					</Pressable>
+
+					<Pressable
+						onPress={async () => {
+							try {
+								await sendTestNotification();
+							} catch (error) {
+								console.error(
+									"Notification error",
+									error,
+								);
+							}
+						}}
+						style={{
+							height: 52,
+							paddingHorizontal: 18,
+							borderRadius: 14,
+							borderWidth: 1,
+							borderColor: colors.border,
+							backgroundColor: colors.surface,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Text
+							style={{
+								color: colors.textPrimary,
+								fontSize: 14,
+								fontWeight: "600",
+							}}
+						>
+							Test
+						</Text>
+					</Pressable>
 				</View>
 
 				<FlatList
@@ -248,6 +284,39 @@ export const AttentionInterrupter = () => {
 								})
 							}
 						/>
+					)}
+					ListEmptyComponent={() => (
+						<View
+							style={{
+								paddingTop: 80,
+								alignItems: "center",
+							}}
+						>
+							<Text
+								style={{
+									color: colors.textPrimary,
+									fontSize: 20,
+									fontWeight: "700",
+									marginBottom: 10,
+								}}
+							>
+								No schedules yet
+							</Text>
+
+							<Text
+								style={{
+									color: colors.textSecondary,
+									fontSize: 15,
+									textAlign: "center",
+									lineHeight: 22,
+									paddingHorizontal: 24,
+								}}
+							>
+								Create your first interruption
+								schedule to start breaking
+								hyperfocus loops.
+							</Text>
+						</View>
 					)}
 				/>
 			</View>

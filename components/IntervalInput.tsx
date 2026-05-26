@@ -56,16 +56,6 @@ export const IntervalInput = ({
 				marginTop: 18,
 			}}
 		>
-			<Text
-				style={{
-					color: colors.textSecondary,
-					fontSize: 13,
-					marginBottom: 10,
-				}}
-			>
-				Repeat Every
-			</Text>
-
 			<View
 				style={{
 					flexDirection: "row",

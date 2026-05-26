@@ -45,7 +45,8 @@ export const NudgeScheduleCard = ({
 				borderRadius: 16,
 				borderWidth: 1,
 				borderColor: colors.border,
-				padding: 18,
+				paddingHorizontal: 18,
+				paddingVertical: 20,
 				opacity: schedule.enabled ? 1 : 0.5,
 			}}
 		>
@@ -61,7 +62,7 @@ export const NudgeScheduleCard = ({
 						numberOfLines={1}
 						style={{
 							color: colors.textPrimary,
-							fontSize: 18,
+							fontSize: 19,
 							fontWeight: "700",
 						}}
 					>
@@ -72,7 +73,7 @@ export const NudgeScheduleCard = ({
 						style={{
 							color: colors.textPrimary,
 							fontSize: 15,
-							marginTop: 14,
+							marginTop: 16,
 						}}
 					>
 						{summaryText}

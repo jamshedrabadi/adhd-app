@@ -311,7 +311,8 @@ export const ScheduleEditorScreen = () => {
 			{/* CONTENT */}
 			<View
 				style={{
-					paddingHorizontal: 24,
+					paddingHorizontal: 20,
+					paddingBottom: 40,
 				}}
 			>
 				<ScheduleEditor

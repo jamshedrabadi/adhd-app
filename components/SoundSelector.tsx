@@ -22,15 +22,6 @@ export const SoundSelector = ({
 
 	return (
 		<View style={{ marginTop: 16 }}>
-			<Text
-				style={{
-					color: colors.textSecondary,
-					marginBottom: 12,
-				}}
-			>
-				Sound
-			</Text>
-
 			<View
 				style={{
 					flexDirection: "row",
