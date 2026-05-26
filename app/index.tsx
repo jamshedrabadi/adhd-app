@@ -43,13 +43,26 @@ export const Index = () => {
 						"/(features)/attention-interrupter",
 					)
 				}
-				style={{
-					backgroundColor: colors.surface,
+				android_ripple={{
+					color: colors.border,
+					borderless: false,
+				}}
+				style={({ pressed }) => ({
+					backgroundColor: pressed
+						? colors.surfaceAlt
+						: colors.surface,
 					borderRadius: 16,
 					borderWidth: 1,
 					borderColor: colors.border,
 					padding: 20,
-				}}
+					transform: [
+						{
+							scale: pressed
+								? 0.985
+								: 1,
+						},
+					],
+				})}
 			>
 				<Text
 					style={{

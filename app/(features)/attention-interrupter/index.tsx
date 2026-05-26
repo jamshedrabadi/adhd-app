@@ -140,14 +140,20 @@ export const AttentionInterrupter = () => {
 								"/(features)/attention-interrupter/schedule-editor",
 							)
 						}
-						style={{
+						style={({ pressed }) => ({
 							flex: 1,
 							height: 52,
 							borderRadius: 14,
-							backgroundColor: colors.accent,
+							backgroundColor: pressed
+								? "#005E7D"
+								: colors.accent,
 							justifyContent: "center",
 							alignItems: "center",
-						}}
+							overflow: "hidden",
+							opacity: pressed
+								? 0.92
+								: 1,
+						})}
 					>
 						<Text
 							style={{

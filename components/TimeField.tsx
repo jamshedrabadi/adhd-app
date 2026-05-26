@@ -14,14 +14,12 @@ import DateTimePicker, {
 import { useTheme } from "../theme/ThemeProvider";
 
 type Props = {
-	label: string;
 	value: string;
 	onChange: (time: string) => void;
 	disabled?: boolean;
 };
 
 export const TimeField = ({
-	label,
 	value,
 	onChange,
 	disabled = false,
@@ -81,26 +79,23 @@ export const TimeField = ({
 
 	return (
 		<View style={{ marginTop: 16 }}>
-			<Text
-				style={{
-					color: colors.textSecondary,
-					marginBottom: 8,
-				}}
-			>
-				{label}
-			</Text>
-
 			<Pressable
 				onPress={() =>
 					!disabled &&
 					setShowPicker(true)
 				}
-				style={{
-					borderBottomWidth: 1,
-					borderColor: colors.border,
-					paddingVertical: 10,
-					opacity: disabled ? 0.5 : 1,
-				}}
+				style={({ pressed }) => ({
+					backgroundColor: colors.surfaceAlt,
+					borderRadius: 12,
+					paddingVertical: 14,
+					paddingHorizontal: 14,
+					opacity:
+						pressed
+							? 0.7
+							: disabled
+								? 0.5
+								: 1,
+				})}
 			>
 				<Text
 					style={{

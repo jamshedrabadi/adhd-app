@@ -28,20 +28,26 @@ export const ScheduleEditor = ({
 	return (
 		<View
 			style={{
-				paddingBottom: 40,
+				paddingBottom: 24,
+				gap: 24,
 			}}
 		>
+			{/* NAME */}
 			<View
 				style={{
-					marginBottom: 28,
+					backgroundColor: colors.surface,
+					borderRadius: 18,
+					borderWidth: 1,
+					borderColor: colors.border,
+					padding: 16,
 				}}
 			>
 				<Text
 					style={{
 						color: colors.textSecondary,
-						marginBottom: 8,
 						fontSize: 13,
 						fontWeight: "600",
+						marginBottom: 12,
 					}}
 				>
 					Schedule Name
@@ -55,49 +61,51 @@ export const ScheduleEditor = ({
 							name: text,
 						})
 					}
-					placeholder="New Schedule"
+					placeholder="Morning Focus"
 					placeholderTextColor={
 						colors.textSecondary
 					}
 					style={{
-						backgroundColor: colors.surfaceAlt,
-						borderRadius: 14,
-						borderWidth: 1,
-						borderColor: colors.border,
-						paddingHorizontal: 16,
-						height: 54,
 						color: colors.textPrimary,
-						fontSize: 16,
+						fontSize: 18,
 						fontWeight: "600",
 					}}
 				/>
 			</View>
 
+			{/* TIME */}
 			<View
 				style={{
-					marginBottom: 28,
+					backgroundColor:
+						colors.surface,
+					borderRadius: 18,
+					borderWidth: 1,
+					borderColor:
+						colors.border,
+					padding: 16,
 				}}
 			>
-				<Text
-					style={{
-						color: colors.textSecondary,
-						fontSize: 13,
-						fontWeight: "600",
-						marginBottom: 14,
-					}}
-				>
-					Time Window
-				</Text>
-
 				<View
 					style={{
 						flexDirection: "row",
-						gap: 12,
+						gap: 16,
 					}}
 				>
 					<View style={{ flex: 1 }}>
+						<Text
+							style={{
+								color:
+									colors.textSecondary,
+								fontSize: 13,
+								fontWeight: "600",
+								marginBottom: 8,
+								marginLeft: 4,
+							}}
+						>
+							Start
+						</Text>
+
 						<TimeField
-							label="Start"
 							value={schedule.startTime}
 							onChange={(time) =>
 								onChange({
@@ -109,8 +117,20 @@ export const ScheduleEditor = ({
 					</View>
 
 					<View style={{ flex: 1 }}>
+						<Text
+							style={{
+								color:
+									colors.textSecondary,
+								fontSize: 13,
+								fontWeight: "600",
+								marginBottom: 8,
+								marginLeft: 4,
+							}}
+						>
+							End
+						</Text>
+
 						<TimeField
-							label="End"
 							value={schedule.endTime}
 							onChange={(time) =>
 								onChange({
@@ -123,9 +143,14 @@ export const ScheduleEditor = ({
 				</View>
 			</View>
 
+			{/* INTERVAL */}
 			<View
 				style={{
-					marginBottom: 28,
+					backgroundColor: colors.surface,
+					borderRadius: 18,
+					borderWidth: 1,
+					borderColor: colors.border,
+					padding: 16,
 				}}
 			>
 				<Text
@@ -133,10 +158,10 @@ export const ScheduleEditor = ({
 						color: colors.textSecondary,
 						fontSize: 13,
 						fontWeight: "600",
-						marginBottom: 14,
+						marginBottom: -2,
 					}}
 				>
-					Nudge Frequency
+					Repeat Every
 				</Text>
 
 				<IntervalInput
@@ -150,9 +175,14 @@ export const ScheduleEditor = ({
 				/>
 			</View>
 
+			{/* SOUND */}
 			<View
 				style={{
-					marginBottom: 8,
+					backgroundColor: colors.surface,
+					borderRadius: 18,
+					borderWidth: 1,
+					borderColor: colors.border,
+					padding: 16,
 				}}
 			>
 				<Text
@@ -160,7 +190,7 @@ export const ScheduleEditor = ({
 						color: colors.textSecondary,
 						fontSize: 13,
 						fontWeight: "600",
-						marginBottom: 14,
+						marginBottom: -4,
 					}}
 				>
 					Sound

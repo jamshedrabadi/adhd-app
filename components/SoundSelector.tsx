@@ -40,7 +40,11 @@ export const SoundSelector = ({
 								!disabled &&
 								onChange(sound.id)
 							}
-							style={{
+							android_ripple={{
+								color: "rgba(255,255,255,0.12)",
+								borderless: false,
+							}}
+							style={({ pressed }) => ({
 								paddingHorizontal: 12,
 								paddingVertical: 10,
 								borderRadius: 12,
@@ -48,13 +52,22 @@ export const SoundSelector = ({
 								borderColor: selected
 									? colors.accent
 									: colors.border,
-								backgroundColor: selected
-									? colors.accentMuted
-									: colors.surfaceAlt,
-								opacity: disabled
-									? 0.5
-									: 1,
-							}}
+								backgroundColor: pressed
+									? selected
+										? colors.accent
+										: colors.border
+									: selected
+										? colors.accentMuted
+										: colors.surfaceAlt,
+								transform: [
+									{
+										scale: pressed
+											? 0.97
+											: 1,
+									},
+								],
+								opacity: disabled ? 0.5 : 1,
+							})}
 						>
 							<Text
 								style={{

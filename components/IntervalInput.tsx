@@ -75,14 +75,27 @@ export const IntervalInput = ({
 						!disabled &&
 						updateValue(value - 1)
 					}
+					android_ripple={{
+						color: "rgba(255,255,255,0.12)",
+						borderless: false,
+					}}
 					hitSlop={6}
-					style={{
-						width: 30,
-						height: 30,
+					style={({ pressed }) => ({
+						width: 56,
+						height: 48,
 						justifyContent: "center",
 						alignItems: "center",
-						borderRadius: 8,
-					}}
+						backgroundColor: pressed
+							? colors.border
+							: "transparent",
+						transform: [
+							{
+								scale: pressed
+									? 0.94
+									: 1,
+							},
+						],
+					})}
 				>
 					<Ionicons
 						name="remove"
@@ -142,14 +155,27 @@ export const IntervalInput = ({
 						!disabled &&
 						updateValue(value + 1)
 					}
+					android_ripple={{
+						color: "rgba(255,255,255,0.12)",
+						borderless: false,
+					}}
 					hitSlop={6}
-					style={{
-						width: 30,
-						height: 30,
+					style={({ pressed }) => ({
+						width: 56,
+						height: 48,
 						justifyContent: "center",
 						alignItems: "center",
-						borderRadius: 8,
-					}}
+						backgroundColor: pressed
+							? colors.border
+							: "transparent",
+						transform: [
+							{
+								scale: pressed
+									? 0.94
+									: 1,
+							},
+						],
+					})}
 				>
 					<Ionicons
 						name="add"

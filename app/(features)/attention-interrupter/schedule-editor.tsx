@@ -3,6 +3,9 @@ import {
 	Text,
 	Pressable,
 	Alert,
+	ScrollView,
+	KeyboardAvoidingView,
+	Platform,
 } from "react-native";
 
 import {
@@ -200,51 +203,66 @@ export const ScheduleEditorScreen = () => {
 	}
 
 	return (
-		<View
-			style={{
-				flex: 1,
-				backgroundColor: colors.background,
-			}}
+		<KeyboardAvoidingView
+			style={{ flex: 1 }}
+			behavior={
+				Platform.OS === "ios"
+					? "padding"
+					: undefined
+			}
 		>
-			{/* TOP BAR */}
 			<View
 				style={{
-					paddingHorizontal: 24,
-					paddingTop: 20,
-					paddingBottom: 20,
+					flex: 1,
+					backgroundColor: colors.background,
 				}}
 			>
-				<Text
-					style={{
-						color: colors.textPrimary,
-						fontSize: 24,
-						fontWeight: "700",
-						marginBottom: 20,
+				<ScrollView
+					keyboardDismissMode="on-drag"
+					keyboardShouldPersistTaps="handled"
+					contentContainerStyle={{
+						paddingHorizontal: 20,
+						paddingTop: 20,
+						paddingBottom: 140,
 					}}
 				>
-					{isEditing
-						? "Edit Schedule"
-						: "New Schedule"}
-				</Text>
+					<ScheduleEditor
+						schedule={schedule}
+						onChange={setSchedule}
+					/>
+				</ScrollView>
 
+				{/* BOTTOM ACTION BAR */}
 				<View
 					style={{
 						flexDirection: "row",
 						gap: 12,
+						paddingHorizontal: 20,
+						paddingTop: 16,
+						paddingBottom: 28,
+						borderTopWidth: 1,
+						borderTopColor: colors.border,
+						backgroundColor: colors.background,
 					}}
 				>
 					<Pressable
 						onPress={handleCancel}
-						style={{
+						android_ripple={{
+							color: "rgba(255,255,255,0.08)",
+						}}
+						style={({ pressed }) => ({
 							flex: 1,
-							height: 48,
-							borderRadius: 12,
+							height: 52,
+							borderRadius: 14,
 							borderWidth: 1,
 							borderColor: colors.border,
+							backgroundColor: pressed
+								? colors.surfaceAlt
+								: colors.surface,
 							justifyContent: "center",
 							alignItems: "center",
-							backgroundColor: colors.surface,
-						}}
+							overflow: "hidden",
+						})}
 					>
 						<Text
 							style={{
@@ -259,18 +277,24 @@ export const ScheduleEditorScreen = () => {
 
 					<Pressable
 						onPress={handleSave}
+						android_ripple={{
+							color: "rgba(255,255,255,0.10)",
+						}}
 						disabled={!isValid}
-						style={{
+						style={({ pressed }) => ({
 							flex: 1,
-							height: 48,
-							borderRadius: 12,
-							backgroundColor: isValid
-								? colors.accent
-								: colors.surfaceAlt,
+							height: 52,
+							borderRadius: 14,
+							backgroundColor: pressed
+								? colors.accentMuted
+								: isValid
+									? colors.accent
+									: colors.surfaceAlt,
 							justifyContent: "center",
 							alignItems: "center",
-							opacity: isValid ? 1 : 0.5,
-						}}
+							overflow: "hidden",
+							opacity: !isValid ? 0.5 : 1,
+						})}
 					>
 						<Text
 							style={{
@@ -286,15 +310,22 @@ export const ScheduleEditorScreen = () => {
 					{isEditing && (
 						<Pressable
 							onPress={handleDelete}
-							style={{
-								width: 48,
-								height: 48,
-								borderRadius: 12,
+							android_ripple={{
+								color: "rgba(255,255,255,0.08)",
+							}}
+							style={({ pressed }) => ({
+								width: 52,
+								height: 52,
+								borderRadius: 14,
 								borderWidth: 1,
 								borderColor: colors.warning,
+								backgroundColor: pressed
+									? colors.surfaceAlt
+									: "transparent",
 								justifyContent: "center",
 								alignItems: "center",
-							}}
+								overflow: "hidden",
+							})}
 						>
 							<Ionicons
 								name="trash-outline"
@@ -307,20 +338,7 @@ export const ScheduleEditorScreen = () => {
 					)}
 				</View>
 			</View>
-
-			{/* CONTENT */}
-			<View
-				style={{
-					paddingHorizontal: 20,
-					paddingBottom: 40,
-				}}
-			>
-				<ScheduleEditor
-					schedule={schedule}
-					onChange={setSchedule}
-				/>
-			</View>
-		</View>
+		</KeyboardAvoidingView>
 	);
 };
 

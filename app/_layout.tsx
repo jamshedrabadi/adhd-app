@@ -41,14 +41,20 @@ const RootLayoutContent = () => {
 					headerRight: () => (
 						<Pressable
 							onPress={toggleTheme}
-							hitSlop={8}
-							style={{
+							android_ripple={{
+								color: colors.border,
+								borderless: true,
+							}}
+							style={({ pressed }) => ({
 								width: 36,
 								height: 36,
 								borderRadius: 18,
 								justifyContent: "center",
 								alignItems: "center",
-							}}
+								backgroundColor: pressed
+									? colors.surfaceAlt
+									: "transparent",
+							})}
 						>
 							<Ionicons
 								name={
@@ -75,7 +81,11 @@ const RootLayoutContent = () => {
 
 				<Stack.Screen
 					name="(features)/attention-interrupter/schedule-editor"
-					options={{ title: "Schedule" }}
+					options={({ route }: any) => ({
+						title: route.params?.scheduleId
+							? "Edit Schedule"
+							: "Add Schedule",
+					})}
 				/>
 			</Stack>
 		</>

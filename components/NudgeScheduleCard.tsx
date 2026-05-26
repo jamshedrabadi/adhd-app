@@ -40,15 +40,27 @@ export const NudgeScheduleCard = ({
 	return (
 		<Pressable
 			onPress={onPress}
-			style={{
-				backgroundColor: colors.surface,
+			android_ripple={{
+				color: colors.border,
+				borderless: false,
+			}}
+			style={({ pressed }) => ({
+				backgroundColor: pressed
+					? colors.surfaceAlt
+					: colors.surface,
 				borderRadius: 16,
 				borderWidth: 1,
 				borderColor: colors.border,
-				paddingHorizontal: 18,
-				paddingVertical: 20,
+				padding: 18,
 				opacity: schedule.enabled ? 1 : 0.5,
-			}}
+				transform: [
+					{
+						scale: pressed
+							? 0.985
+							: 1,
+					},
+				],
+			})}
 		>
 			<View
 				style={{
