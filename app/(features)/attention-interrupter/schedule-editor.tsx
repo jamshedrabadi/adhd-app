@@ -20,7 +20,6 @@ import {
 } from "expo-router";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { Ionicons } from "@expo/vector-icons";
 
 import { ScheduleEditor } from "../../../components/ScheduleEditor";
@@ -28,6 +27,7 @@ import { NudgeSchedule } from "../../../types/NudgeSchedule";
 import { useTheme } from "../../../theme/ThemeProvider";
 import { validateSchedule } from "../../../utils/validateSchedule";
 import { STORAGE_KEYS } from "../../../constants/storage";
+import { generateId } from "../../../utils/id";
 
 export const ScheduleEditorScreen = () => {
 	const router = useRouter();
@@ -43,7 +43,7 @@ export const ScheduleEditorScreen = () => {
 
 	const [schedule, setSchedule] =
 		useState<NudgeSchedule>({
-			id: Date.now().toString(),
+			id: generateId(),
 			name: "",
 			enabled: true,
 			startTime: "09:00",
