@@ -24,8 +24,7 @@ import { NudgeSchedule } from "../../../types/NudgeSchedule";
 import { NudgeScheduleCard } from "../../../components/NudgeScheduleCard";
 import { useTheme } from "../../../theme/ThemeProvider";
 import { sendTestNotification } from "../../../utils/notifications";
-
-const STORAGE_KEY = "NUDGE_SCHEDULES";
+import { STORAGE_KEYS } from "../../../constants/storage";
 
 export const AttentionInterrupter = () => {
 	const router = useRouter();
@@ -38,7 +37,7 @@ export const AttentionInterrupter = () => {
 	// Load schedules
 	const loadNudgeSchedules = useCallback(async () => {
 		try {
-			const data = await AsyncStorage.getItem(STORAGE_KEY);
+			const data = await AsyncStorage.getItem(STORAGE_KEYS.NUDGE_SCHEDULES);
 
 			if (!data) {
 				setNudgeSchedules([]);
@@ -94,7 +93,7 @@ export const AttentionInterrupter = () => {
 		debounce(async (value: NudgeSchedule[]) => {
 			try {
 				await AsyncStorage.setItem(
-					STORAGE_KEY,
+					STORAGE_KEYS.NUDGE_SCHEDULES,
 					JSON.stringify(value),
 				);
 			} catch (error) {
@@ -250,7 +249,7 @@ export const AttentionInterrupter = () => {
 										setNudgeSchedules(updatedSchedules);
 
 										await AsyncStorage.setItem(
-											STORAGE_KEY,
+											STORAGE_KEYS.NUDGE_SCHEDULES,
 											JSON.stringify(updatedSchedules),
 										);
 									} catch (error) {

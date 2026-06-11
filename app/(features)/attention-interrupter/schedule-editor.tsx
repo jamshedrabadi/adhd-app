@@ -24,12 +24,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 
 import { ScheduleEditor } from "../../../components/ScheduleEditor";
-
 import { NudgeSchedule } from "../../../types/NudgeSchedule";
-
 import { useTheme } from "../../../theme/ThemeProvider";
-
-const STORAGE_KEY = "NUDGE_SCHEDULES";
+import { validateSchedule } from "../../../utils/validateSchedule";
+import { STORAGE_KEYS } from "../../../constants/storage";
 
 export const ScheduleEditorScreen = () => {
 	const router = useRouter();
@@ -64,7 +62,7 @@ export const ScheduleEditorScreen = () => {
 			}
 
 			try {
-				const data = await AsyncStorage.getItem(STORAGE_KEY);
+				const data = await AsyncStorage.getItem(STORAGE_KEYS.NUDGE_SCHEDULES);
 
 				if (!data) {
 					setLoaded(true);
@@ -108,8 +106,18 @@ export const ScheduleEditorScreen = () => {
 			return;
 		}
 
+		const validation = validateSchedule(schedule);
+
+		if (!validation.valid) {
+			Alert.alert( "Invalid Schedule",
+				validation.message ?? "Invalid schedule.",
+			);
+
+			return;
+		}
+
 		try {
-			const data = await AsyncStorage.getItem(STORAGE_KEY);
+			const data = await AsyncStorage.getItem(STORAGE_KEYS.NUDGE_SCHEDULES);
 
 			const schedules: NudgeSchedule[] =
 				data
@@ -133,7 +141,7 @@ export const ScheduleEditorScreen = () => {
 			}
 
 			await AsyncStorage.setItem(
-				STORAGE_KEY,
+				STORAGE_KEYS.NUDGE_SCHEDULES,
 				JSON.stringify(updatedSchedules),
 			);
 
@@ -163,7 +171,7 @@ export const ScheduleEditorScreen = () => {
 					style: "destructive",
 					onPress: async () => {
 						try {
-							const data = await AsyncStorage.getItem(STORAGE_KEY);
+							const data = await AsyncStorage.getItem(STORAGE_KEYS.NUDGE_SCHEDULES);
 
 							if (!data) {
 								return;
@@ -177,7 +185,7 @@ export const ScheduleEditorScreen = () => {
 							);
 
 							await AsyncStorage.setItem(
-								STORAGE_KEY,
+								STORAGE_KEYS.NUDGE_SCHEDULES,
 								JSON.stringify(filtered),
 							);
 
