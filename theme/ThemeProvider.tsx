@@ -7,17 +7,26 @@ import {
 } from "react";
 
 import {
+	useColorScheme,
+} from "react-native";
+
+import {
 	darkColors,
 	lightColors,
 	ThemeColors,
 } from "./theme";
 
-type ThemeMode = "light" | "dark";
+type ThemeMode =
+	| "light"
+	| "dark"
+	| "system";
 
 type ThemeContextValue = {
 	mode: ThemeMode;
 	colors: ThemeColors;
-	toggleTheme: () => void;
+	setMode: (
+		mode: ThemeMode,
+	) => void;
 };
 
 const ThemeContext =
@@ -32,30 +41,31 @@ type Props = {
 export const ThemeProvider = ({
 	children,
 }: Props) => {
-	const [mode, setMode] =
-		useState<ThemeMode>("dark");
+	const systemTheme = useColorScheme();
 
-	const toggleTheme = () => {
-		setMode((prev) =>
-			prev === "dark"
-				? "light"
-				: "dark",
-		);
-	};
+	const [mode, setMode] =
+		useState<ThemeMode>("system");
+
+	const resolvedMode =
+		mode === "system"
+			? systemTheme === "dark"
+				? "dark"
+				: "light"
+			: mode;
 
 	const colors = useMemo(
 		() =>
-			mode === "dark"
+			resolvedMode === "dark"
 				? darkColors
 				: lightColors,
-		[mode],
+		[resolvedMode],
 	);
 
 	const value = useMemo(
 		() => ({
 			mode,
 			colors,
-			toggleTheme,
+			setMode,
 		}),
 		[mode, colors],
 	);

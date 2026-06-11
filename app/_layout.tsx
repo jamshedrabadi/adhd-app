@@ -1,7 +1,7 @@
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 import {
 	ThemeProvider,
@@ -12,8 +12,9 @@ const RootLayoutContent = () => {
 	const {
 		colors,
 		mode,
-		toggleTheme,
 	} = useTheme();
+
+	const router = useRouter();
 
 	return (
 		<>
@@ -37,41 +38,46 @@ const RootLayoutContent = () => {
 					contentStyle: {
 						backgroundColor: colors.background,
 					},
-
-					headerRight: () => (
-						<Pressable
-							onPress={toggleTheme}
-							android_ripple={{
-								color: colors.border,
-								borderless: true,
-							}}
-							style={({ pressed }) => ({
-								width: 36,
-								height: 36,
-								borderRadius: 18,
-								justifyContent: "center",
-								alignItems: "center",
-								backgroundColor: pressed
-									? colors.surfaceAlt
-									: "transparent",
-							})}
-						>
-							<Ionicons
-								name={
-									mode === "dark"
-										? "sunny-outline"
-										: "moon-outline"
-								}
-								size={22}
-								color={colors.textPrimary}
-							/>
-						</Pressable>
-					),
 				}}
 			>
 				<Stack.Screen
 					name="index"
-					options={{ headerTitle: "" }}
+					options={{
+						headerTitle: "",
+
+						headerRight: () => (
+							<Pressable
+								onPress={() =>
+									router.push(
+										"/settings",
+									)
+								}
+								style={({ pressed }) => ({
+									width: 38,
+									height: 38,
+									borderRadius: 19,
+									justifyContent: "center",
+									alignItems: "center",
+									backgroundColor: pressed
+										? colors.surfaceAlt
+										: "transparent",
+								})}
+							>
+								<Ionicons
+									name="settings-outline"
+									size={22}
+									color={
+										colors.textPrimary
+									}
+								/>
+							</Pressable>
+						),
+					}}
+				/>
+
+				<Stack.Screen
+					name="settings"
+					options={{ title: "Settings" }}
 				/>
 
 				<Stack.Screen
