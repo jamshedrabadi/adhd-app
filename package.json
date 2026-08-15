@@ -4,6 +4,7 @@
 	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
+		"preandroid": "node ./scripts/sync-android-display-name.cjs",
 		"start": "expo start",
 		"start:clear": "expo start --clear",
 		"start:clear-dev": "expo start --clear --dev-client",
