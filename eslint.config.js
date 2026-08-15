@@ -6,7 +6,7 @@ import { defineConfig } from 'eslint/config';
 export default defineConfig([
 	expoConfig,
 	{
-		ignores: ['dist/*', 'app-example/*'],
+		ignores: ['dist/*'],
 	},
 	{
 		plugins: {
