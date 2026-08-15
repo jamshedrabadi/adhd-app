@@ -6,6 +6,8 @@ module.exports = {
 	expo: {
 		...baseConfig.expo,
 		name: identity.displayName,
+		slug: identity.slug,
+		scheme: identity.scheme,
 		description: identity.storeSubtitle,
 	},
 };

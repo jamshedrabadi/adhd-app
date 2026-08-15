@@ -13,6 +13,14 @@ const stringsPath = path.join(
 	"values",
 	"strings.xml",
 );
+const manifestPath = path.join(
+	projectRoot,
+	"android",
+	"app",
+	"src",
+	"main",
+	"AndroidManifest.xml",
+);
 
 if (!fs.existsSync(stringsPath)) {
 	process.exit(0);
@@ -35,3 +43,24 @@ const nextStrings = strings.includes('name="app_name"')
 	: strings.replace("<resources>", `<resources>\n  ${appName}`);
 
 fs.writeFileSync(stringsPath, nextStrings);
+
+if (!fs.existsSync(manifestPath)) {
+	process.exit(0);
+}
+
+let schemeIndex = 0;
+const manifest = fs.readFileSync(manifestPath, "utf8");
+const nextManifest = manifest.replace(
+	/<data android:scheme="[^"]+"\s*\/>/g,
+	() => {
+		const scheme = schemeIndex === 0
+			? identity.scheme
+			: `exp+${identity.slug}`;
+
+		schemeIndex += 1;
+
+		return `<data android:scheme="${scheme}"/>`;
+	},
+);
+
+fs.writeFileSync(manifestPath, nextManifest);

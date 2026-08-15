@@ -1,5 +1,7 @@
 {
 	"displayName": "Cueda",
+	"slug": "cueda",
+	"scheme": "cueda",
 	"storeTitle": "Cueda: ADHD Support",
 	"storeSubtitle": "Gentle cues for time awareness and attention"
 }
