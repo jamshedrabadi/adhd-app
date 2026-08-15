@@ -9,5 +9,9 @@ module.exports = {
 		slug: identity.slug,
 		scheme: identity.scheme,
 		description: identity.storeSubtitle,
+		android: {
+			...baseConfig.expo.android,
+			package: identity.androidPackage,
+		},
 	},
 };
