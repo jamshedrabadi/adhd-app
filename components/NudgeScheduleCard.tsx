@@ -5,7 +5,7 @@ import {
 	Switch,
 } from "react-native";
 
-import { NudgeSchedule } from "../types/NudgeSchedule";
+import { NudgeSchedule } from "../types/nudgeSchedule";
 import { useTheme } from "../theme/ThemeProvider";
 import { formatTime } from "../utils/time";
 

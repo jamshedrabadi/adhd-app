@@ -20,7 +20,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import debounce from "lodash.debounce";
 
-import { NudgeSchedule } from "../../../types/NudgeSchedule";
+import { NudgeSchedule } from "../../../types/nudgeSchedule";
 import { NudgeScheduleCard } from "../../../components/NudgeScheduleCard";
 import { useTheme } from "../../../theme/ThemeProvider";
 import { sendTestNotification } from "../../../utils/notifications";

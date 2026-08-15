@@ -4,7 +4,7 @@ import {
 	TextInput,
 } from "react-native";
 
-import { NudgeSchedule } from "../types/NudgeSchedule";
+import { NudgeSchedule } from "../types/nudgeSchedule";
 
 import { useTheme } from "../theme/ThemeProvider";
 

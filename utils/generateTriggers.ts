@@ -1,4 +1,4 @@
-import { NudgeSchedule } from "../types/NudgeSchedule";
+import { NudgeSchedule } from "../types/nudgeSchedule";
 
 import {
 	getScheduleDurationMinutes,
