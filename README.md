@@ -1,50 +1,36 @@
-# Welcome to your Expo app 👋
+# Cueda
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Gentle cues for time awareness and attention. Cueda is a personal Android-first app built with Expo and React Native.
 
-## Get started
+## Development
 
-1. Install dependencies
+Install dependencies once:
 
-   ```bash
-   npm install
-   ```
+    npm install
 
-2. Start the app
+With an Android development build installed on a connected device:
 
-   ```bash
-   npx expo start
-   ```
+    npm run start:clear-dev
 
-In the output, you'll find options to open the app in a
+To build and install the Android development app:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+    npm run android
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Run checks before committing:
 
-## Get a fresh project
+    npm run lint
+    npx tsc --noEmit
 
-When you're ready, run:
+## App identity
 
-```bash
-npm run reset-project
-```
+All user-facing and Android identity values live in [app.identity.json](./app.identity.json). Update that file to change the launcher name, Expo slug, URL scheme, Android package ID, and store copy.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Native Android files are generated and intentionally excluded from Git. preandroid syncs only the Android launcher label; Expo generates the URL schemes from the app configuration.
 
-## Learn more
+## Structure
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- app/ — Expo Router screens
+- components/ — reusable interface components
+- theme/ — colour and appearance system
+- utils/ — scheduling, validation, notification, and time helpers
+- STORE_LISTING.md — Play Store title and short-description copy
