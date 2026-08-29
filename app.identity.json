@@ -4,5 +4,6 @@
 	"scheme": "cueda",
 	"storeTitle": "Cueda: ADHD Support",
 	"storeSubtitle": "Gentle cues for time awareness and attention",
-	"androidPackage": "com.jamshedrabadi.cueda"
+	"androidPackage": "com.jamshedrabadi.cueda",
+	"iosBundleIdentifier": "com.jamshedrabadi.cueda"
 }

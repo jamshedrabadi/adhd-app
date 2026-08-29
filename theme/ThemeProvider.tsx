@@ -1,87 +1,69 @@
-import {
-	createContext,
-	useContext,
-	useMemo,
-	useState,
-	ReactNode,
-} from "react";
+import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useColorScheme } from "react-native";
 
-import {
-	useColorScheme,
-} from "react-native";
+import { readJson, writeJson } from "@/lib/storage/jsonStore";
+import { STORAGE_KEYS } from "@/lib/storage/keys";
 
-import {
-	darkColors,
-	lightColors,
-	ThemeColors,
-} from "./theme";
-
-type ThemeMode =
-	| "light"
-	| "dark"
-	| "system";
+import { darkColors, lightColors, ResolvedThemeMode, ThemeColors, ThemePreference } from "./tokens";
 
 type ThemeContextValue = {
-	mode: ThemeMode;
 	colors: ThemeColors;
-	setMode: (
-		mode: ThemeMode,
-	) => void;
+	preference: ThemePreference;
+	resolvedMode: ResolvedThemeMode;
+	isReady: boolean;
+	setPreference: (preference: ThemePreference) => Promise<void>;
 };
 
-const ThemeContext =
-	createContext<ThemeContextValue | null>(
-		null,
-	);
+const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-type Props = {
-	children: ReactNode;
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+	const systemColorScheme = useColorScheme();
+	const [preference, setPreferenceState] = useState<ThemePreference>("light");
+	const [isReady, setIsReady] = useState(false);
+
+	useEffect(() => {
+		const loadPreference = async (): Promise<void> => {
+			const storedPreference = await readJson<ThemePreference>(STORAGE_KEYS.THEME_PREFERENCE);
+
+			if (storedPreference === "light" || storedPreference === "dark" || storedPreference === "system") {
+				setPreferenceState(storedPreference);
+			}
+
+			setIsReady(true);
+		};
+
+		void loadPreference();
+	}, []);
+
+	const resolvedMode: ResolvedThemeMode = preference === "system"
+		? systemColorScheme === "dark"
+			? "dark"
+			: "light"
+		: preference;
+
+	const colors = resolvedMode === "dark" ? darkColors : lightColors;
+
+	const setPreference = async (nextPreference: ThemePreference): Promise<void> => {
+		setPreferenceState(nextPreference);
+		await writeJson(STORAGE_KEYS.THEME_PREFERENCE, nextPreference);
+	};
+
+	const value = useMemo(() => ({
+		colors,
+		preference,
+		resolvedMode,
+		isReady,
+		setPreference,
+	}), [colors, isReady, preference, resolvedMode]);
+
+	return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
-export const ThemeProvider = ({
-	children,
-}: Props) => {
-	const systemTheme = useColorScheme();
-
-	const [mode, setMode] =
-		useState<ThemeMode>("system");
-
-	const resolvedMode =
-		mode === "system"
-			? systemTheme === "dark"
-				? "dark"
-				: "light"
-			: mode;
-
-	const colors = useMemo(
-		() =>
-			resolvedMode === "dark"
-				? darkColors
-				: lightColors,
-		[resolvedMode],
-	);
-
-	const value = useMemo(
-		() => ({
-			mode,
-			colors,
-			setMode,
-		}),
-		[mode, colors],
-	);
-
-	return (
-		<ThemeContext.Provider value={value}>
-			{children}
-		</ThemeContext.Provider>
-	);
-};
-
-export const useTheme = () => {
+export const useTheme = (): ThemeContextValue => {
 	const context = useContext(ThemeContext);
 
 	if (!context) {
-		throw new Error("useTheme must be used inside ThemeProvider");
+		throw new Error("useTheme must be used inside ThemeProvider.");
 	}
 
 	return context;

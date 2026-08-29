@@ -7,6 +7,7 @@ module.exports = {
 		icon: "./assets/images/icon.png",
 		userInterfaceStyle: "automatic",
 		ios: {
+			bundleIdentifier: identity.iosBundleIdentifier,
 			supportsTablet: true,
 		},
 		android: {
@@ -26,19 +27,27 @@ module.exports = {
 		plugins: [
 			"expo-router",
 			[
+				"expo-notifications",
+				{
+					color: "#087E8B",
+					defaultChannel: "attention-soft-chime",
+					sounds: [
+						"./assets/sounds/soft-chime.wav",
+						"./assets/sounds/bell.wav",
+						"./assets/sounds/digital.wav",
+						"./assets/sounds/knock.wav",
+					],
+				},
+			],
+			[
 				"expo-splash-screen",
 				{
 					image: "./assets/images/splash-icon.png",
 					imageWidth: 200,
 					resizeMode: "contain",
 					backgroundColor: "#ffffff",
-					dark: {
-						backgroundColor: "#000000",
-					},
 				},
 			],
-			"@react-native-community/datetimepicker",
-			"expo-web-browser",
 		],
 		experiments: {
 			typedRoutes: true,
