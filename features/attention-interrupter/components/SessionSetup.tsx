@@ -4,6 +4,8 @@ import { AppPressable } from "@/components/ui/AppPressable";
 import { formatClockTime, formatDuration } from "@/lib/time/format";
 import { useTheme } from "@/theme/ThemeProvider";
 
+import { AttentionNotificationTestControls } from "../development/AttentionNotificationTestControls";
+import { isAttentionNotificationTestEnabled } from "../development/attentionNotificationTest";
 import { MAX_PENDING_CUES, MIN_INTERVAL_MINUTES, SessionDraft } from "../types";
 import { getPlannedCueCount } from "../domain/sessionPlan";
 
@@ -103,6 +105,8 @@ export const SessionSetup = ({ draft, onChange, onStart, isStarting }: Props) =>
 			<AppPressable disabled={isStarting} onPress={onStart} style={{ alignItems: "center", backgroundColor: colors.accent, borderRadius: 16, paddingVertical: 17 }}>
 				<Text style={{ color: "#FFFFFF", fontSize: 16, fontWeight: "800" }}>{isStarting ? "Starting…" : "Start session"}</Text>
 			</AppPressable>
+
+			{isAttentionNotificationTestEnabled && <AttentionNotificationTestControls />}
 		</View>
 	);
 };
