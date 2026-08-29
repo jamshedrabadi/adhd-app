@@ -34,24 +34,19 @@ const writeWave = (name, durationSeconds, sampleAt) => {
 
 fs.mkdirSync(outputDirectory, { recursive: true });
 
-writeWave("soft-chime", 0.9, (time) => {
-	const envelope = Math.exp(-3.4 * time);
-	return envelope * (0.18 * Math.sin(2 * Math.PI * 660 * time) + 0.1 * Math.sin(2 * Math.PI * 990 * time));
-});
+writeWave("attention_bells", 2.35, (time) => {
+	const bellStarts = [0, 0.64, 1.28];
 
-writeWave("bell", 1.15, (time) => {
-	const envelope = Math.exp(-2.7 * time);
-	return envelope * (0.17 * Math.sin(2 * Math.PI * 523.25 * time) + 0.11 * Math.sin(2 * Math.PI * 1046.5 * time) + 0.06 * Math.sin(2 * Math.PI * 1569.75 * time));
-});
+	return bellStarts.reduce((signal, start) => {
+		const elapsed = time - start;
+		if (elapsed < 0) {
+			return signal;
+		}
 
-writeWave("digital", 0.42, (time) => {
-	const envelope = Math.exp(-6.5 * time);
-	return envelope * 0.18 * Math.sign(Math.sin(2 * Math.PI * 880 * time));
-});
-
-writeWave("knock", 0.38, (time) => {
-	const first = Math.exp(-18 * time) * Math.sin(2 * Math.PI * 135 * time);
-	const secondTime = Math.max(0, time - 0.16);
-	const second = Math.exp(-20 * secondTime) * Math.sin(2 * Math.PI * 145 * secondTime);
-	return 0.24 * (first + second);
+		const envelope = Math.exp(-3.1 * elapsed);
+		const bell = 0.23 * Math.sin(2 * Math.PI * 659.25 * elapsed)
+			+ 0.14 * Math.sin(2 * Math.PI * 987.77 * elapsed)
+			+ 0.08 * Math.sin(2 * Math.PI * 1318.51 * elapsed);
+		return signal + envelope * bell;
+	}, 0);
 });

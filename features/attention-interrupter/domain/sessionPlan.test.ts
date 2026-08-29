@@ -8,7 +8,6 @@ const createTimedSession = (overrides: Partial<AttentionSession> = {}): Attentio
 	kind: "timed",
 	status: "active",
 	intervalMinutes: 5,
-	sound: "soft-chime",
 	createdAt: "2026-08-29T10:00:00.000Z",
 	startedAt: "2026-08-29T10:00:00.000Z",
 	endAt: "2026-08-29T11:00:00.000Z",
@@ -31,12 +30,12 @@ describe("session plans", () => {
 	});
 
 	it("keeps open-ended sessions to one repeating notification", () => {
-		expect(getPlannedCueCount({ durationMinutes: null, intervalMinutes: 5, sound: "bell" })).toBe(1);
+		expect(getPlannedCueCount({ durationMinutes: null, intervalMinutes: 5 })).toBe(1);
 	});
 
 	it("rejects timed sessions above the shared 60-cue limit", () => {
-		expect(validateDraft({ durationMinutes: 305, intervalMinutes: 5, sound: "digital" })).toContain("60");
-		expect(validateDraft({ durationMinutes: 300, intervalMinutes: 5, sound: "digital" })).toBeNull();
+		expect(validateDraft({ durationMinutes: 305, intervalMinutes: 5 })).toContain("60");
+		expect(validateDraft({ durationMinutes: 300, intervalMinutes: 5 })).toBeNull();
 	});
 
 	it("keeps paused time fixed and calculates the next active cue from actual timestamps", () => {

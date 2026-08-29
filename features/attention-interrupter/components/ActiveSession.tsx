@@ -71,7 +71,7 @@ export const ActiveSession = ({ session, onPause, onResume, onExtend, onComplete
 					</Text>
 				</View>
 				<Text style={{ color: colors.textSecondary, fontSize: 14, lineHeight: 20, marginTop: 16 }}>
-					Every {session.intervalMinutes} minutes · {session.sound.split("-").map((word) => word[0].toUpperCase() + word.slice(1)).join(" ")}
+					Every {session.intervalMinutes} minutes · Cueda attention bells
 				</Text>
 			</View>
 

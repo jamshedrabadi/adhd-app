@@ -30,12 +30,9 @@ module.exports = {
 				"expo-notifications",
 				{
 					color: "#087E8B",
-					defaultChannel: "attention-soft-chime",
+					defaultChannel: "attention-interruptions",
 					sounds: [
-						"./assets/sounds/soft-chime.wav",
-						"./assets/sounds/bell.wav",
-						"./assets/sounds/digital.wav",
-						"./assets/sounds/knock.wav",
+						"./assets/sounds/attention_bells.wav",
 					],
 				},
 			],

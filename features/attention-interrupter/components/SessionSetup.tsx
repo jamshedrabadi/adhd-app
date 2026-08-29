@@ -4,7 +4,7 @@ import { AppPressable } from "@/components/ui/AppPressable";
 import { formatClockTime, formatDuration } from "@/lib/time/format";
 import { useTheme } from "@/theme/ThemeProvider";
 
-import { ATTENTION_SOUNDS, AttentionSoundId, MAX_PENDING_CUES, MIN_INTERVAL_MINUTES, SessionDraft } from "../types";
+import { MAX_PENDING_CUES, MIN_INTERVAL_MINUTES, SessionDraft } from "../types";
 import { getPlannedCueCount } from "../domain/sessionPlan";
 
 type Props = {
@@ -25,8 +25,6 @@ export const SessionSetup = ({ draft, onChange, onStart, isStarting }: Props) =>
 	const endsAt = draft.durationMinutes === null
 		? null
 		: new Date(Date.now() + draft.durationMinutes * 60 * 1000);
-
-	const updateSound = (sound: AttentionSoundId): void => onChange({ ...draft, sound });
 
 	return (
 		<View style={{ gap: 20 }}>
@@ -89,19 +87,6 @@ export const SessionSetup = ({ draft, onChange, onStart, isStarting }: Props) =>
 					<Text style={{ color: colors.textSecondary, fontSize: 13, lineHeight: 18, marginTop: 8 }}>Minimum {MIN_INTERVAL_MINUTES} minutes. Choose any whole-minute interval.</Text>
 				</View>
 
-				<View>
-					<Text style={{ color: colors.textSecondary, fontSize: 13, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase" }}>Sound</Text>
-					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 12 }}>
-						{ATTENTION_SOUNDS.map((sound) => {
-							const selected = sound.id === draft.sound;
-							return (
-								<AppPressable key={sound.id} onPress={() => updateSound(sound.id)} style={{ backgroundColor: selected ? colors.accentMuted : colors.surfacePressed, borderColor: selected ? colors.accent : colors.border, borderRadius: 12, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 10 }}>
-									<Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: selected ? "700" : "600" }}>{sound.label}</Text>
-								</AppPressable>
-							);
-						})}
-					</View>
-				</View>
 			</View>
 
 			<View style={{ backgroundColor: colors.accentMuted, borderRadius: 18, padding: 16 }}>

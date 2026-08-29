@@ -90,7 +90,6 @@ export const useAttentionSession = () => {
 				kind: endAt ? "timed" : "open-ended",
 				status: "active",
 				intervalMinutes: draft.intervalMinutes,
-				sound: draft.sound,
 				createdAt: now.toISOString(),
 				startedAt: now.toISOString(),
 				endAt: endAt?.toISOString() ?? null,
@@ -101,11 +100,11 @@ export const useAttentionSession = () => {
 			};
 
 			const notificationIds = endAt
-				? await scheduleTimedCues(getTimedCueDates(now, endAt, draft.intervalMinutes), { sessionId: id, sound: draft.sound })
+				? await scheduleTimedCues(getTimedCueDates(now, endAt, draft.intervalMinutes), { sessionId: id })
 				: [];
 			const repeatingNotificationId = endAt
 				? null
-				: await scheduleRepeatingCue(draft.intervalMinutes, { sessionId: id, sound: draft.sound });
+				: await scheduleRepeatingCue(draft.intervalMinutes, { sessionId: id });
 			const nextSession = { ...baseSession, notificationIds, repeatingNotificationId };
 
 			await saveAttentionSession(nextSession);
@@ -169,11 +168,11 @@ export const useAttentionSession = () => {
 				pausedAt: null,
 				remainingMs: null,
 				notificationIds: endAt
-					? await scheduleTimedCues(getTimedCueDates(now, endAt, session.intervalMinutes), { sessionId: session.id, sound: session.sound })
+					? await scheduleTimedCues(getTimedCueDates(now, endAt, session.intervalMinutes), { sessionId: session.id })
 					: [],
 				repeatingNotificationId: endAt
 					? null
-					: await scheduleRepeatingCue(session.intervalMinutes, { sessionId: session.id, sound: session.sound }),
+					: await scheduleRepeatingCue(session.intervalMinutes, { sessionId: session.id }),
 			};
 			await saveAttentionSession(nextSession);
 			setSession(nextSession);
@@ -200,7 +199,7 @@ export const useAttentionSession = () => {
 		}
 
 		try {
-			const notificationIds = await scheduleTimedCues(cueDates, { sessionId: session.id, sound: session.sound });
+			const notificationIds = await scheduleTimedCues(cueDates, { sessionId: session.id });
 			await cancelNotifications(session.notificationIds);
 			const nextSession = { ...session, endAt: endAt.toISOString(), notificationIds };
 			await saveAttentionSession(nextSession);

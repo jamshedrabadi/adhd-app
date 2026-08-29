@@ -1,7 +1,20 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
-const getAttentionChannelId = (sound: string): string => `attention-${sound}`;
+const ATTENTION_CHANNEL_ID = "attention-interruptions";
+const ATTENTION_SOUND_FILE = "attention_bells.wav";
+const LEGACY_CHANNEL_IDS = [
+	"attention-soft-chime",
+	"attention-bell",
+	"attention-digital",
+	"attention-knock",
+	"attention-v2-soft-chime",
+	"attention-v2-bell",
+	"attention-v2-digital",
+	"attention-v2-knock",
+	"attention-bells-v3",
+	"cueda-bells-v4",
+];
 
 Notifications.setNotificationHandler({
 	handleNotification: () => Promise.resolve({
@@ -12,16 +25,17 @@ Notifications.setNotificationHandler({
 	}),
 });
 
-export const ensureNotificationChannel = async (sound: string): Promise<void> => {
+export const ensureNotificationChannel = async (): Promise<void> => {
 	if (Platform.OS !== "android") {
 		return;
 	}
 
-	await Notifications.setNotificationChannelAsync(getAttentionChannelId(sound), {
-		name: "Attention interruptions",
+	await Promise.all(LEGACY_CHANNEL_IDS.map((channelId) => Notifications.deleteNotificationChannelAsync(channelId)));
+	await Notifications.setNotificationChannelAsync(ATTENTION_CHANNEL_ID, {
+		name: "Cueda attention bells",
 		importance: Notifications.AndroidImportance.HIGH,
 		vibrationPattern: [0, 180],
-		sound: `${sound}.wav`,
+		sound: ATTENTION_SOUND_FILE,
 		lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
 	});
 };
@@ -42,33 +56,29 @@ export const requestNotificationPermission = async (): Promise<boolean> => {
 
 type CueContent = {
 	sessionId: string;
-	sound: string;
 };
 
-const createCueContent = ({ sessionId, sound }: CueContent): Notifications.NotificationContentInput => ({
+const createCueContent = ({ sessionId }: CueContent): Notifications.NotificationContentInput => ({
 	title: "Attention check-in",
 	body: "Take a moment to notice where your attention is.",
-	sound: `${sound}.wav`,
+	sound: ATTENTION_SOUND_FILE,
 	data: {
 		feature: "attention-interrupter",
 		sessionId,
-		sound,
 	},
 });
 
 export const scheduleTimedCues = async (dates: Date[], content: CueContent): Promise<string[]> => {
-	await ensureNotificationChannel(content.sound);
+	await ensureNotificationChannel();
 	const notificationIds: string[] = [];
 
 	for (const date of dates) {
 		const notificationId = await Notifications.scheduleNotificationAsync({
-			content: {
-				...createCueContent(content),
-				...(Platform.OS === "android" ? { channelId: getAttentionChannelId(content.sound) } : {}),
-			},
+			content: createCueContent(content),
 			trigger: {
 				type: Notifications.SchedulableTriggerInputTypes.DATE,
 				date,
+				...(Platform.OS === "android" ? { channelId: ATTENTION_CHANNEL_ID } : {}),
 			},
 		});
 		notificationIds.push(notificationId);
@@ -78,17 +88,15 @@ export const scheduleTimedCues = async (dates: Date[], content: CueContent): Pro
 };
 
 export const scheduleRepeatingCue = async (intervalMinutes: number, content: CueContent): Promise<string> => {
-	await ensureNotificationChannel(content.sound);
+	await ensureNotificationChannel();
 
 	return Notifications.scheduleNotificationAsync({
-		content: {
-			...createCueContent(content),
-			...(Platform.OS === "android" ? { channelId: getAttentionChannelId(content.sound) } : {}),
-		},
+		content: createCueContent(content),
 		trigger: {
 			type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
 			seconds: intervalMinutes * 60,
 			repeats: true,
+			...(Platform.OS === "android" ? { channelId: ATTENTION_CHANNEL_ID } : {}),
 		},
 	});
 };

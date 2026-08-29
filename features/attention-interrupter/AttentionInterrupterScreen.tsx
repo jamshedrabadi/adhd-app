@@ -13,7 +13,6 @@ import { SessionDraft } from "./types";
 const INITIAL_DRAFT: SessionDraft = {
 	durationMinutes: 60,
 	intervalMinutes: 10,
-	sound: "soft-chime",
 };
 
 export const AttentionInterrupterScreen = () => {
