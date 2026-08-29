@@ -3,18 +3,6 @@ import { Platform } from "react-native";
 
 const ATTENTION_CHANNEL_ID = "attention-interruptions";
 const ATTENTION_SOUND_FILE = "attention_bells.wav";
-const LEGACY_CHANNEL_IDS = [
-	"attention-soft-chime",
-	"attention-bell",
-	"attention-digital",
-	"attention-knock",
-	"attention-v2-soft-chime",
-	"attention-v2-bell",
-	"attention-v2-digital",
-	"attention-v2-knock",
-	"attention-bells-v3",
-	"cueda-bells-v4",
-];
 
 Notifications.setNotificationHandler({
 	handleNotification: () => Promise.resolve({
@@ -30,7 +18,6 @@ export const ensureNotificationChannel = async (): Promise<void> => {
 		return;
 	}
 
-	await Promise.all(LEGACY_CHANNEL_IDS.map((channelId) => Notifications.deleteNotificationChannelAsync(channelId)));
 	await Notifications.setNotificationChannelAsync(ATTENTION_CHANNEL_ID, {
 		name: "Cueda attention bells",
 		importance: Notifications.AndroidImportance.HIGH,

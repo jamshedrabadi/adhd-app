@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Alert, Linking, Modal, ScrollView, Text, View } from "react-native";
 
 import { AppPressable } from "@/components/ui/AppPressable";
-import { hasNotificationPermission } from "@/lib/notifications/localNotifications";
 import { useTheme } from "@/theme/ThemeProvider";
 
 import { ActiveSession } from "./components/ActiveSession";
 import { SessionSetup } from "./components/SessionSetup";
 import { useAttentionSession } from "./hooks/useAttentionSession";
+import { hasNotificationPermission } from "./services/attentionNotifications";
 import { SessionDraft } from "./types";
 
 const INITIAL_DRAFT: SessionDraft = {
@@ -76,7 +76,12 @@ export const AttentionInterrupterScreen = () => {
 						session={session}
 					/>
 				) : (
-					<SessionSetup draft={draft} isStarting={isStarting} onChange={setDraft} onStart={() => void beginStart()} />
+					<SessionSetup
+						draft={draft}
+						isStarting={isStarting}
+						onChange={setDraft}
+						onStart={() => void beginStart()}
+					/>
 				)}
 				{error && <Text style={{ color: colors.danger, fontSize: 14, lineHeight: 20, marginTop: 16 }}>{error}</Text>}
 			</ScrollView>
@@ -86,7 +91,13 @@ export const AttentionInterrupterScreen = () => {
 					<View style={{ backgroundColor: colors.surfaceRaised, borderRadius: 24, gap: 16, padding: 22 }}>
 						<Text style={{ color: colors.textPrimary, fontSize: 22, fontWeight: "800" }}>Allow attention check-ins</Text>
 						<Text style={{ color: colors.textSecondary, fontSize: 16, lineHeight: 24 }}>Cueda needs notification access to send your check-ins, even when the app is closed. You can turn this off any time in Settings.</Text>
-						<AppPressable onPress={() => { setShowPermissionExplanation(false); void start(); }} style={{ alignItems: "center", backgroundColor: colors.accent, borderRadius: 16, paddingVertical: 16 }}>
+						<AppPressable
+							onPress={() => {
+								setShowPermissionExplanation(false);
+								void start();
+							}}
+							style={{ alignItems: "center", backgroundColor: colors.accent, borderRadius: 16, paddingVertical: 16 }}
+						>
 							<Text style={{ color: "#FFFFFF", fontSize: 16, fontWeight: "800" }}>Continue</Text>
 						</AppPressable>
 						<AppPressable onPress={() => setShowPermissionExplanation(false)} style={{ alignItems: "center", borderRadius: 16, paddingVertical: 14 }}>

@@ -30,7 +30,6 @@ module.exports = {
 				"expo-notifications",
 				{
 					color: "#087E8B",
-					defaultChannel: "attention-interruptions",
 					sounds: [
 						"./assets/sounds/attention_bells.wav",
 					],

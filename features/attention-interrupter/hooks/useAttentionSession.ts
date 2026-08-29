@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFocusEffect } from "expo-router";
 
 import { createId } from "@/lib/id";
-import { cancelNotifications, getPendingNotificationIds, requestNotificationPermission, scheduleRepeatingCue, scheduleTimedCues } from "@/lib/notifications/localNotifications";
 
 import { getNextCueDate, getRemainingMs, getTimedCueDates, validateDraft } from "../domain/sessionPlan";
+import { cancelNotifications, getPendingNotificationIds, requestNotificationPermission, scheduleRepeatingCue, scheduleTimedCues } from "../services/attentionNotifications";
 import { clearAttentionSession, loadAttentionSession, saveAttentionSession } from "../services/sessionStorage";
 import { AttentionSession, EXTENSION_MINUTES, MAX_PENDING_CUES, SessionDraft } from "../types";
 
