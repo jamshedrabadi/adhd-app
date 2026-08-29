@@ -9,6 +9,17 @@ export default defineConfig([
 		ignores: ['dist/*'],
 	},
 	{
+		files: ["scripts/**/*.cjs"],
+		languageOptions: {
+			globals: {
+				Buffer: "readonly",
+				__dirname: "readonly",
+				module: "readonly",
+				require: "readonly",
+			},
+		},
+	},
+	{
 		plugins: {
 			"@stylistic": stylistic,
 		},
